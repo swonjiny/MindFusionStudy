@@ -1,0 +1,93 @@
+const readySpecs = [
+  ["01-01", "빈 Diagram 생성", "빈 Diagram", "노드 없이 Diagram과 DiagramView를 생성합니다.", 0, 0, ["Diagram", "DiagramView"]],
+  ["01-02", "Diagram 화면 크기", "화면 크기", "반응형 화면과 고정 높이를 비교합니다.", 0, 0, ["DiagramView"]],
+  ["01-03", "Diagram 배경 설정", "배경 설정", "Diagram 배경과 격자를 표시합니다.", 0, 0, ["Diagram", "backBrush"]],
+  ["02-01", "일반 노드 1개 생성", "노드 1개", "ShapeNode 한 개를 직접 생성해 화면에 표시합니다.", 1, 0, ["ShapeNode", "Rect"]],
+  ["02-02", "일반 노드 2개 생성", "노드 2개", "서로 다른 스타일의 ShapeNode 두 개를 배치합니다.", 2, 0, ["ShapeNode", "Diagram"]],
+  ["02-03", "Factory 방식 노드 생성", "Factory 생성", "diagram.factory.createShapeNode로 노드를 생성합니다.", 1, 0, ["DiagramFactory", "ShapeNode"]],
+  ["02-04", "직접 생성 방식 노드 생성", "직접 생성", "new ShapeNode와 addItem으로 노드를 생성합니다.", 1, 0, ["ShapeNode", "addItem"]],
+  ["02-05", "두 생성 방식 비교", "생성 방식 비교", "Factory 방식과 직접 생성 방식을 한 화면에서 비교합니다.", 2, 0, ["DiagramFactory", "ShapeNode"]],
+  ["02-06", "노드 위치 변경", "위치 변경", "bounds를 갱신해 노드 위치를 변경합니다.", 1, 0, ["Rect", "bounds"]],
+  ["02-07", "노드 크기 변경", "크기 변경", "bounds의 너비와 높이를 변경합니다.", 1, 0, ["Rect", "bounds"]],
+  ["02-08", "노드 텍스트 표시", "텍스트 표시", "노드의 text와 글자 스타일을 설정합니다.", 1, 0, ["ShapeNode", "text"]],
+  ["02-09", "여러 줄 텍스트", "여러 줄 텍스트", "줄바꿈 문자를 사용해 여러 줄 텍스트를 표시합니다.", 1, 0, ["ShapeNode", "text"]],
+  ["02-10", "노드 텍스트 정렬", "텍스트 정렬", "가로·세로 텍스트 정렬을 비교합니다.", 3, 0, ["Alignment", "ShapeNode"]],
+  ["02-11", "노드 배경색", "배경색", "brush로 노드 배경색을 구분합니다.", 3, 0, ["ShapeNode", "brush"]],
+  ["02-12", "노드 테두리", "테두리", "stroke, 굵기, 선 모양을 비교합니다.", 3, 0, ["DashStyle", "ShapeNode"]],
+  ["03-01", "텍스트 여백 설정", "텍스트 여백", "Thickness로 노드 안쪽 텍스트 여백을 설정합니다.", 2, 0, ["Thickness", "textPadding"]],
+  ["03-02", "글꼴 스타일 설정", "글꼴 스타일", "Font 객체로 글꼴 크기와 굵기를 설정합니다.", 2, 0, ["Font", "ShapeNode"]],
+  ["03-03", "텍스트 외곽선", "텍스트 외곽선", "textStroke와 textStrokeThickness를 적용합니다.", 2, 0, ["textStroke", "textStrokeThickness"]],
+  ["03-04", "텍스트 자르기 비교", "텍스트 자르기", "clipText 적용 여부에 따른 긴 텍스트 표시를 비교합니다.", 2, 0, ["clipText", "ShapeNode"]],
+  ["03-05", "텍스트에 맞춰 크기 조정", "텍스트 맞춤 크기", "resizeToFitText로 노드 크기를 텍스트에 맞춥니다.", 2, 0, ["resizeToFitText", "FitSize"]],
+  ["04-01", "노드 클릭 이벤트", "클릭 이벤트", "onNodeClicked에서 클릭한 노드와 이벤트 횟수를 확인합니다.", 2, 0, ["onNodeClicked", "NodeEventArgs"], "click"],
+  ["04-02", "단일 노드 선택", "단일 선택", "Selection.addItem으로 한 노드를 선택합니다.", 2, 0, ["Selection", "addItem"], "selection", true],
+  ["04-03", "다중 노드 선택", "다중 선택", "allowMultipleSelection과 Selection API로 여러 노드를 선택합니다.", 3, 0, ["Selection", "allowMultipleSelection"], "selection", true],
+  ["04-04", "선택 변경 이벤트", "선택 변경", "onSelectionChanged에서 이전·새 선택 항목을 확인합니다.", 3, 0, ["onSelectionChanged", "SelectionChangedEventArgs"], "selection", true],
+  ["04-05", "노드 더블 클릭 이벤트", "더블 클릭", "onNodeDoubleClicked에서 더블 클릭 이벤트를 확인합니다.", 2, 0, ["onNodeDoubleClicked", "NodeEventArgs"], "doubleClick"],
+  ["05-01", "연결선 1개 생성", "연결선 1개", "두 노드 사이에 DiagramLink 한 개를 생성합니다.", 2, 1, ["DiagramLink", "createDiagramLink"]],
+  ["05-02", "연결선 2개 생성", "연결선 2개", "세 노드를 두 연결선으로 연결합니다.", 3, 2, ["DiagramLink", "DiagramFactory"]],
+  ["05-03", "연결선 텍스트 표시", "연결선 텍스트", "연결선의 text 속성에 관계 설명을 표시합니다.", 2, 1, ["DiagramLink", "text"]],
+  ["05-04", "화살표 머리 설정", "화살표 머리", "ArrowHeads.Triangle로 연결 방향을 표시합니다.", 2, 1, ["ArrowHeads", "headShape"]],
+  ["05-05", "연결선 모양과 스타일 비교", "연결선 스타일", "Bezier와 Cascading 연결선, 색상과 점선을 비교합니다.", 3, 2, ["LinkShape", "DashStyle"]],
+];
+
+const guideFolders = {
+  "01": "01-diagram-basic",
+  "02": "02-general-node",
+  "03": "03-node-content",
+  "04": "04-selection-events",
+  "05": "05-links",
+};
+
+export const categories = [
+  ["00", "시작하기"], ["01", "Diagram 기본"], ["02", "일반 노드"],
+  ["03", "일반 노드 내부 콘텐츠"], ["04", "노드 선택과 이벤트"], ["05", "연결선"],
+  ["06", "부모·자식 트리 구조"], ["07", "트리 배치와 레이아웃"], ["08", "접기·펼치기"],
+  ["09", "HTML 요소 노드 기초"], ["10", "HTML 노드 내부 요소"], ["11", "HTML 노드 버튼 이벤트"],
+  ["12", "명함형 카드 콘텐츠"], ["13", "선택 시 카드 펼치기"], ["14", "이미지·제목·설명 노드"],
+  ["15", "노드 편집"], ["16", "데이터 저장과 불러오기"], ["17", "스타일과 테마"],
+  ["18", "성능과 대규모 Diagram"], ["19", "완성 예제"],
+].map(([key, title]) => ({ key, title }));
+
+const readyLessons = readySpecs.map((spec, index) => {
+  const [key, title, shortTitle, description, expectedNodes, expectedLinks, objects, eventKind, requiresSelection] = spec;
+  const category = key.slice(0, 2);
+  return {
+    key, category, title, shortTitle, description, expectedNodes, expectedLinks, objects,
+    eventKind: eventKind || null,
+    requiresSelection: Boolean(requiresSelection),
+    goals: [
+      description,
+      `실행 후 노드 ${expectedNodes}개와 연결선 ${expectedLinks}개를 검증합니다.`,
+      "브라우저 콘솔 오류 없이 동작하는지 확인합니다.",
+    ],
+    level: "beginner",
+    status: "ready",
+    guidePath: `/src/guides/${guideFolders[category]}/${key}.md`,
+    previousLessonKey: index ? readySpecs[index - 1][0] : null,
+    nextLessonKey: index < readySpecs.length - 1 ? readySpecs[index + 1][0] : null,
+  };
+});
+
+const plannedLessons = categories
+  .filter(({ key }) => Number(key) === 0 || Number(key) >= 6)
+  .map(({ key, title }) => ({
+    key: `${key}-01`,
+    category: key,
+    title: `${title} 준비 중`,
+    shortTitle: "준비 중",
+    description: "현재 개발 범위에 포함되지 않은 메뉴입니다.",
+    expectedNodes: 0,
+    expectedLinks: 0,
+    objects: [],
+    goals: [],
+    level: "planned",
+    status: "planned",
+    guidePath: null,
+    previousLessonKey: null,
+    nextLessonKey: null,
+  }));
+
+export const lessons = [...readyLessons, ...plannedLessons];
+export const lessonByKey = Object.fromEntries(lessons.map((lesson) => [lesson.key, lesson]));
+export { readyLessons };

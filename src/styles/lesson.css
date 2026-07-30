@@ -1,0 +1,85 @@
+.lesson-heading {
+  margin-bottom: 16px;
+  padding: 18px 20px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 18px rgba(25, 54, 93, 0.05);
+}
+
+.dark .lesson-heading {
+  border-color: #293241;
+  background: #141b27;
+}
+
+.lesson-heading .ant-breadcrumb {
+  margin-bottom: 12px;
+}
+
+.lesson-heading h2.ant-typography {
+  margin: 0;
+  font-size: clamp(22px, 2vw, 29px);
+}
+
+.lesson-heading > .ant-typography {
+  max-width: 900px;
+  margin: 10px 0 0;
+  color: #5d687a;
+}
+
+.lesson-number {
+  margin: 0;
+  padding: 5px 10px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.lesson-actions {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #edf0f5;
+}
+
+.lesson-tabs > .ant-tabs-nav {
+  position: sticky;
+  z-index: 8;
+  top: 0;
+  margin-bottom: 14px;
+  padding: 0 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(10px);
+}
+
+.dark .lesson-tabs > .ant-tabs-nav {
+  border-color: #293241;
+  background: rgba(20, 27, 39, 0.96);
+}
+
+.lesson-card {
+  height: auto;
+  margin-bottom: 14px;
+}
+
+.stacked-alert {
+  margin-top: 12px;
+}
+
+.planned-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+}
+
+@media (max-width: 680px) {
+  .lesson-tabs > .ant-tabs-nav {
+    position: static;
+  }
+
+  .lesson-tabs .ant-tabs-tab {
+    padding-inline: 4px;
+  }
+}

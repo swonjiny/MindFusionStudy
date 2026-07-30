@@ -1,0 +1,77 @@
+import { useMemo, useState } from "react";
+import { Input, Menu, Progress, Tag, Typography } from "antd";
+import {
+  CheckCircleFilled,
+  LockOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import { categories, lessons } from "../data/lessonMenus";
+
+export default function AppSidebar({ selectedKey, onSelect, progress }) {
+  const [query, setQuery] = useState("");
+  const [openKeys, setOpenKeys] = useState(["01", "02"]);
+
+  const menuItems = useMemo(() => {
+    const normalized = query.trim().toLowerCase();
+    return categories
+      .map((category) => {
+        const children = lessons.filter(
+          (lesson) =>
+            lesson.category === category.key &&
+            (!normalized ||
+              lesson.title.toLowerCase().includes(normalized) ||
+              lesson.key.includes(normalized) ||
+              category.title.toLowerCase().includes(normalized)),
+        );
+        if (normalized && children.length === 0) return null;
+        const ready = children.some((lesson) => lesson.status === "ready");
+        return {
+          key: category.key,
+          label: (
+            <span className="category-label">
+              <span>{category.key}. {category.title}</span>
+              {ready ? <CheckCircleFilled className="ready-icon" /> : <LockOutlined />}
+            </span>
+          ),
+          children: children.map((lesson) => ({
+            key: lesson.key,
+            disabled: false,
+            label: (
+              <span className="lesson-menu-label">
+                <span>{lesson.key} {lesson.shortTitle}</span>
+                {lesson.status === "planned" && <Tag>준비 중</Tag>}
+              </span>
+            ),
+          })),
+        };
+      })
+      .filter(Boolean);
+  }, [query]);
+
+  return (
+    <aside className="app-sidebar" data-testid="learning-menu">
+      <Input
+        allowClear
+        prefix={<SearchOutlined />}
+        placeholder="메뉴 검색..."
+        value={query}
+        onChange={(event) => setQuery(event.target.value)}
+      />
+      <div className="sidebar-progress">
+        <div>
+          <Typography.Text strong>학습 목차</Typography.Text>
+          <Typography.Text type="secondary">진도율: {progress}%</Typography.Text>
+        </div>
+        <Progress percent={progress} showInfo={false} size="small" />
+      </div>
+      <Menu
+        mode="inline"
+        items={menuItems}
+        selectedKeys={[selectedKey]}
+        openKeys={openKeys}
+        onOpenChange={setOpenKeys}
+        onSelect={({ key }) => onSelect(key)}
+      />
+    </aside>
+  );
+}

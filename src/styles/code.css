@@ -1,0 +1,34 @@
+.source-panel {
+  overflow: hidden;
+  border: 1px solid #dbe3ee;
+  border-radius: 10px;
+  background: #111827;
+}
+
+.source-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #2b3544;
+  background: #1b2534;
+}
+
+.source-meta .ant-typography {
+  overflow: hidden;
+  color: #b9c9df;
+  text-overflow: ellipsis;
+}
+
+.source-panel pre {
+  max-height: 620px;
+  margin: 0;
+  overflow: auto;
+  padding: 18px;
+  color: #d6e2f3;
+  font-family: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.7;
+  tab-size: 2;
+}

@@ -1,0 +1,29 @@
+{
+  "name": "mindfusion-step-learning",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "playwright test",
+    "test:headed": "playwright test --headed"
+  },
+  "dependencies": {
+    "@ant-design/icons": "6.3.2",
+    "@mindfusion/diagramming": "4.9.1",
+    "@mindfusion/diagramming-react": "4.9.0",
+    "@mindfusion/drawing": "4.4.0",
+    "antd": "6.5.2",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "react-markdown": "10.1.0",
+    "remark-gfm": "4.0.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.62.0",
+    "@vitejs/plugin-react": "6.0.5",
+    "vite": "8.2.0"
+  }
+}
