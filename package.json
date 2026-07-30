@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build --outDir dist/client && node scripts/prepare-sites-build.mjs",
     "preview": "vite preview",
     "test": "playwright test",
     "test:headed": "playwright test --headed"
