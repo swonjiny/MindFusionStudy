@@ -262,8 +262,18 @@ test("11 HTML 버튼 클릭·입력 분리·중복 방지·cleanup이 동작한�
 
   await page.getByText("11-01 버튼 클릭", { exact: true }).click();
   await page.getByRole("tab", { name: "실행 화면" }).click();
-  await page.getByTestId("control-click-button").click();
-  await expect(page.getByTestId("button-click-count")).toHaveText("버튼 클릭 1회");
+  await expect(page.locator('[data-mf-html-node="11-01"] button')).toHaveCount(3);
+  const message = page.getByTestId("control-button-message");
+  await page.getByTestId("control-select-button").click();
+  await expect(message).toHaveText("현재 선택한 버튼은 ‘선택’ 버튼입니다.");
+  await expect(page.getByTestId("control-select-button")).toHaveAttribute("aria-pressed", "true");
+  await page.getByTestId("control-status-button").click();
+  await expect(message).toHaveText("현재 노드는 정상적으로 실행 중입니다.");
+  await page.getByTestId("control-help-button").click();
+  await expect(message).toHaveText("같은 버튼을 다시 누르면 이 메시지가 사라집니다.");
+  await page.getByTestId("control-help-button").click();
+  await expect(message).toBeHidden();
+  await expect(page.getByTestId("button-click-count")).toHaveText("버튼 클릭 4회");
   await expect(page.getByTestId("verification-event")).toContainText("success");
 
   await page.getByText("11-02 이동·클릭 분리", { exact: true }).click();
