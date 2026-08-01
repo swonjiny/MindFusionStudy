@@ -70,6 +70,18 @@ const sourceFileByLesson = {
   "11-02": "/src/examples/11-html-node-events/Step1102MoveClickSeparation.jsx",
   "11-03": "/src/examples/11-html-node-events/Step1103PreventDuplicate.jsx",
   "11-04": "/src/examples/11-html-node-events/Step1104CleanupOnUnmount.jsx",
+  "12-01": "/src/examples/12-business-cards/Step1201OneCard.jsx",
+  "12-02": "/src/examples/12-business-cards/Step1202TwoCards.jsx",
+  "12-03": "/src/examples/12-business-cards/Step1203ThreeCards.jsx",
+  "12-04": "/src/examples/12-business-cards/Step1204FiveCards.jsx",
+  "13-01": "/src/examples/13-expand-on-selection/Step1301CollapsedBeforeSelection.jsx",
+  "13-02": "/src/examples/13-expand-on-selection/Step1302ExpandSelected.jsx",
+  "13-03": "/src/examples/13-expand-on-selection/Step1303RestoreOnDeselect.jsx",
+  "13-04": "/src/examples/13-expand-on-selection/Step1304SizeByCardCount.jsx",
+  "14-01": "/src/examples/14-image-title-description/Step1401ProfileContent.jsx",
+  "14-02": "/src/examples/14-image-title-description/Step1402ImageFallback.jsx",
+  "14-03": "/src/examples/14-image-title-description/Step1403EmptyData.jsx",
+  "14-04": "/src/examples/14-image-title-description/Step1404CardClickSelection.jsx",
 };
 
 export default function SourceCodeViewer({ lesson }) {

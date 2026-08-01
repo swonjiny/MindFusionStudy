@@ -54,6 +54,18 @@ import Step1101ButtonClick from "../examples/11-html-node-events/Step1101ButtonC
 import Step1102MoveClickSeparation from "../examples/11-html-node-events/Step1102MoveClickSeparation";
 import Step1103PreventDuplicate from "../examples/11-html-node-events/Step1103PreventDuplicate";
 import Step1104CleanupOnUnmount from "../examples/11-html-node-events/Step1104CleanupOnUnmount";
+import Step1201OneCard from "../examples/12-business-cards/Step1201OneCard";
+import Step1202TwoCards from "../examples/12-business-cards/Step1202TwoCards";
+import Step1203ThreeCards from "../examples/12-business-cards/Step1203ThreeCards";
+import Step1204FiveCards from "../examples/12-business-cards/Step1204FiveCards";
+import Step1301CollapsedBeforeSelection from "../examples/13-expand-on-selection/Step1301CollapsedBeforeSelection";
+import Step1302ExpandSelected from "../examples/13-expand-on-selection/Step1302ExpandSelected";
+import Step1303RestoreOnDeselect from "../examples/13-expand-on-selection/Step1303RestoreOnDeselect";
+import Step1304SizeByCardCount from "../examples/13-expand-on-selection/Step1304SizeByCardCount";
+import Step1401ProfileContent from "../examples/14-image-title-description/Step1401ProfileContent";
+import Step1402ImageFallback from "../examples/14-image-title-description/Step1402ImageFallback";
+import Step1403EmptyData from "../examples/14-image-title-description/Step1403EmptyData";
+import Step1404CardClickSelection from "../examples/14-image-title-description/Step1404CardClickSelection";
 
 export const lessonRegistry = {
   "01-01": Step0101EmptyDiagram,
@@ -112,4 +124,16 @@ export const lessonRegistry = {
   "11-02": Step1102MoveClickSeparation,
   "11-03": Step1103PreventDuplicate,
   "11-04": Step1104CleanupOnUnmount,
+  "12-01": Step1201OneCard,
+  "12-02": Step1202TwoCards,
+  "12-03": Step1203ThreeCards,
+  "12-04": Step1204FiveCards,
+  "13-01": Step1301CollapsedBeforeSelection,
+  "13-02": Step1302ExpandSelected,
+  "13-03": Step1303RestoreOnDeselect,
+  "13-04": Step1304SizeByCardCount,
+  "14-01": Step1401ProfileContent,
+  "14-02": Step1402ImageFallback,
+  "14-03": Step1403EmptyData,
+  "14-04": Step1404CardClickSelection,
 };

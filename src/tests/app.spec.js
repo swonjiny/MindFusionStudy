@@ -37,9 +37,9 @@ test("애플리케이션 공통 화면과 탭이 동작한다", async ({ page })
 test("모든 예제 JSX가 프로젝트 내부 모듈 없이 독립 실행 가능하다", () => {
   const examplesRoot = join(process.cwd(), "src", "examples");
   const files = readdirSync(examplesRoot, { recursive: true })
-    .filter((file) => typeof file === "string" && /^(0[1-9]|1[01])-/.test(file) && file.endsWith(".jsx"));
+    .filter((file) => typeof file === "string" && /^(0[1-9]|1[0-4])-/.test(file) && file.endsWith(".jsx"));
 
-  expect(files).toHaveLength(56);
+  expect(files).toHaveLength(68);
   for (const file of files) {
     const source = readFileSync(join(examplesRoot, file), "utf8");
     expect(source, file).not.toContain('from "../');
@@ -116,10 +116,10 @@ test("이전·다음 이동과 준비 중 화면이 동작한다", async ({ page
   await page.getByRole("button", { name: "이전 예제", exact: true }).click();
   await expect(page.locator(".lesson-number")).toHaveText("02-01");
 
-  await page.getByText("12. 명함형 카드 콘텐츠", { exact: true }).click();
-  await page.getByText("12-01 준비 중", { exact: true }).click();
+  await page.getByText("15. 노드 편집", { exact: true }).click();
+  await page.getByText("15-01 준비 중", { exact: true }).click();
   await expect(page.getByTestId("planned-lesson")).toBeVisible();
-  await expect(page.getByText(/4차 구현 범위에는 포함되지 않습니다/)).toBeVisible();
+  await expect(page.getByText(/5차 구현 범위에는 포함되지 않습니다/)).toBeVisible();
 
   expect(errors).toEqual([]);
 });
@@ -271,5 +271,77 @@ test("11 HTML 버튼 클릭·입력 분리·중복 방지·cleanup이 동작한�
   await expect(page.getByTestId("cleanup-status")).toContainText("클릭 1회");
   await page.getByText("11-03 중복 등록 방지", { exact: true }).click();
   await expect.poll(() => page.evaluate(() => window.__mfControlNodeCleanup)).toBe(1);
+  expect(errors).toEqual([]);
+});
+
+test("12 카드 1·2·3·5개 예제가 배열과 실제 DOM 수를 검증한다", async ({ page }) => {
+  const errors = collectBrowserErrors(page);
+  await page.goto("/");
+  await page.getByText("12. 명함형 카드 콘텐츠", { exact: true }).click();
+  for (const [key, title, count] of [["12-01", "카드 1개", 1], ["12-02", "카드 2개", 2], ["12-03", "카드 3개", 3], ["12-04", "카드 5개", 5]]) {
+    await page.getByText(`${key} ${title}`, { exact: true }).click();
+    await page.getByRole("tab", { name: "실행 화면" }).click();
+    await expect(page.getByTestId("diagram-demo").locator("[data-card-id]")).toHaveCount(count);
+    await expect(page.getByTestId("verification-card-count")).toContainText(`현재 ${count}개`);
+    await expect(page.getByTestId("verification-card-dom")).toContainText(`현재 ${count}개`);
+    await expect(page.getByTestId("verification-card-count")).toContainText("success");
+    await expect(page.getByTestId("verification-card-expanded")).toContainText("success");
+  }
+  expect(errors).toEqual([]);
+});
+
+test("13 선택 시 확장하고 선택 해제 시 원래 카드 크기로 복원한다", async ({ page }) => {
+  const errors = collectBrowserErrors(page);
+  await page.goto("/");
+  await page.getByText("13. 선택 시 카드 펼치기", { exact: true }).click();
+
+  await page.getByText("13-01 선택 전 축약", { exact: true }).click();
+  await page.getByRole("tab", { name: "실행 화면" }).click();
+  await expect(page.locator('[data-mf-card-node="13-01"]')).toHaveAttribute("data-expanded", "false");
+  await expect(page.getByTestId("verification-card-dom")).toContainText("현재 0개");
+
+  await page.getByText("13-02 선택 시 펼치기", { exact: true }).click();
+  await page.getByRole("button", { name: "노드 선택", exact: true }).click();
+  await expect(page.locator('[data-mf-card-node="13-02"]')).toHaveAttribute("data-expanded", "true");
+  await expect(page.getByTestId("verification-card-selection")).toContainText("success");
+  await expect(page.getByTestId("verification-card-expanded")).toContainText("success");
+
+  await page.getByText("13-03 선택 해제 복원", { exact: true }).click();
+  await expect(page.getByTestId("expand-state")).toContainText("선택 1개");
+  await page.getByRole("button", { name: "선택 해제", exact: true }).click();
+  await expect(page.getByTestId("expand-state")).toContainText("원래 크기 복원");
+  await expect(page.locator('[data-mf-card-node="13-03"]')).toHaveAttribute("data-expanded", "false");
+
+  await page.getByText("13-04 카드 수 크기 계산", { exact: true }).click();
+  await page.getByRole("button", { name: "5개 카드로 펼치기", exact: true }).click();
+  await expect(page.getByTestId("size-result")).toContainText("126 × 108");
+  await expect(page.getByTestId("verification-card-dom")).toContainText("현재 5개");
+  expect(errors).toEqual([]);
+});
+
+test("14 이미지 오류·빈 데이터·카드 클릭 선택 스타일을 처리한다", async ({ page }) => {
+  const errors = collectBrowserErrors(page);
+  await page.goto("/");
+  await page.getByText("14. 이미지·제목·설명 노드", { exact: true }).click();
+
+  await page.getByText("14-01 이미지·제목·설명", { exact: true }).click();
+  await page.getByRole("tab", { name: "실행 화면" }).click();
+  await expect(page.locator('[data-mf-card-node="14-01"] img')).toHaveCount(1);
+
+  await page.getByText("14-02 이미지 오류 처리", { exact: true }).click();
+  await expect(page.getByTestId("image-state")).toContainText("대체 이미지 표시");
+  await expect(page.getByTestId("fallback-image")).toHaveAttribute("data-fallback", "true");
+
+  await page.getByText("14-03 데이터 없음", { exact: true }).click();
+  await expect(page.getByTestId("empty-card-state")).toHaveText("카드 데이터가 없습니다.");
+  await expect(page.getByTestId("verification-card-count")).toContainText("현재 0개");
+
+  await page.getByText("14-04 카드 클릭·선택", { exact: true }).click();
+  const secondCard = page.locator('[data-card-id="2"]');
+  await secondCard.click();
+  await expect(secondCard).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByTestId("card-selection-state")).toHaveText("카드 2 선택됨");
+  await expect(page.getByTestId("verification-selected-card")).toContainText("success");
+  await expect(page.getByTestId("verification-event")).toContainText("success");
   expect(errors).toEqual([]);
 });

@@ -96,6 +96,15 @@ export default function VerificationPanel({ lesson, status, onReset }) {
       ],
     );
   }
+  if (lesson.tracksCardState) {
+    checks.push(
+      ["카드 데이터", `${lesson.expectedCards}개가 필요하며 현재 ${status.cardCount ?? 0}개입니다.`, status.cardCount === lesson.expectedCards, "verification-card-count"],
+      ["카드 DOM", `${lesson.expectedCardDom}개가 필요하며 현재 ${status.cardDomCount ?? 0}개입니다.`, status.cardDomCount === lesson.expectedCardDom, "verification-card-dom"],
+      ["선택 상태", `선택 노드 ${status.selectedNodeCount ?? 0}개`, (status.selectedNodeCount ?? 0) === lesson.expectedSelectedNodes, "verification-card-selection"],
+      ["확장 상태", status.cardExpanded ? "카드 노드가 펼쳐졌습니다." : "카드 노드가 축약되었습니다.", Boolean(status.cardExpanded) === lesson.expectedCardExpanded, "verification-card-expanded"],
+      ["선택 카드", `${lesson.expectedSelectedCards}개가 필요하며 현재 ${status.selectedCardCount ?? 0}개입니다.`, (status.selectedCardCount ?? 0) === lesson.expectedSelectedCards, "verification-selected-card"],
+    );
+  }
   const passedCount = checks.filter((item) => item[2]).length;
 
   return (
@@ -132,6 +141,7 @@ export default function VerificationPanel({ lesson, status, onReset }) {
           {lesson.expectedLinks > 0 && <Typography.Text>• 연결선 방향과 스타일이 설명과 일치하는지 확인</Typography.Text>}
           {lesson.eventKind && <Typography.Text>• 선택·클릭 이벤트 로그가 즉시 갱신되는지 확인</Typography.Text>}
           {lesson.tracksTreeState && <Typography.Text>• 접기·펼치기 후 노드와 연결선이 함께 표시·숨김되는지 확인</Typography.Text>}
+          {lesson.tracksCardState && <Typography.Text>• 카드 수, 선택 상태, 확장 크기와 DOM 수가 함께 갱신되는지 확인</Typography.Text>}
           <Typography.Text>• 텍스트와 색상이 설명과 일치하는지 확인</Typography.Text>
         </Space>
       </Card>

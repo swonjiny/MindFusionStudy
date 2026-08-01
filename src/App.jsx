@@ -27,6 +27,12 @@ const emptyStatus = {
   expandedNodeCount: 0,
   htmlDomCount: 0,
   buttonDomCount: 0,
+  cardCount: 0,
+  cardDomCount: 0,
+  cardExpanded: false,
+  selectedCardCount: 0,
+  imageFallbackCount: 0,
+  emptyDataVisible: false,
   consoleErrorCount: 0,
 };
 

@@ -55,6 +55,18 @@ const readySpecs = [
   ["11-02", "노드 이동과 버튼 클릭 분리", "이동·클릭 분리", "노드 영역 드래그와 내부 버튼 클릭 입력을 분리합니다.", 1, 0, ["data-interactive", "stopPropagation", "bounds"], "buttonClick", false, 1, 0, null, 1, 1],
   ["11-03", "이벤트 중복 등록 방지", "중복 등록 방지", "WeakSet과 Map으로 같은 버튼에 리스너가 두 번 등록되지 않게 합니다.", 1, 0, ["WeakSet", "Map", "addEventListener"], "buttonClick", false, 1, 0, null, 1, 1],
   ["11-04", "컴포넌트 제거 시 이벤트 해제", "이벤트 해제", "cleanup에서 직접 등록한 모든 DOM 이벤트 리스너를 해제합니다.", 1, 0, ["removeEventListener", "useEffect cleanup", "Map"], "buttonClick", false, 1, 0, null, 1, 1],
+  ["12-01", "명함형 카드 1개", "카드 1개", "배열 데이터 한 건을 이미지·닉네임·소개 카드로 표시합니다.", 1, 0, ["ControlNode", "Array.map", "card template"], null, false, 1, 0, null, 1, 0, 1, 1, 0, true, 0],
+  ["12-02", "명함형 카드 2개", "카드 2개", "배열 데이터 두 건을 하나의 HTML 노드에 표시합니다.", 1, 0, ["Array.map", "ControlNode", "data-card-id"], null, false, 1, 0, null, 1, 0, 2, 2, 0, true, 0],
+  ["12-03", "명함형 카드 3개", "카드 3개", "카드 세 개와 계산된 노드 크기를 확인합니다.", 1, 0, ["Rect", "Array.length", "template"], null, false, 1, 0, null, 1, 0, 3, 3, 0, true, 0],
+  ["12-04", "명함형 카드 5개", "카드 5개", "카드 다섯 개에 맞춰 노드 높이와 너비를 계산합니다.", 1, 0, ["Rect", "size calculation", "ControlNode"], null, false, 1, 0, null, 1, 0, 5, 5, 0, true, 0],
+  ["13-01", "선택 전 축약 상태", "선택 전 축약", "선택되지 않은 노드는 카드 목록을 숨기고 축약 상태로 표시합니다.", 1, 0, ["Selection", "collapsed template", "bounds"], null, false, 1, 0, null, 1, 0, 3, 0, 0, false, 0],
+  ["13-02", "선택 시 카드 펼치기", "선택 시 펼치기", "노드를 선택하면 크기를 확장하고 카드 목록을 표시합니다.", 1, 0, ["onSelectionChanged", "getContent", "bounds"], "selection", true, 1, 0, null, 1, 0, 2, 2, 1, true, 0],
+  ["13-03", "선택 해제 시 크기 복원", "선택 해제 복원", "선택을 해제하면 카드 목록을 숨기고 원래 크기로 복원합니다.", 1, 0, ["Selection.clear", "Rect", "innerHTML"], "selection", false, 1, 0, null, 1, 0, 3, 0, 0, false, 0],
+  ["13-04", "카드 수 기반 크기 계산", "카드 수 크기 계산", "카드 수로 노드 너비와 높이를 계산한 뒤 선택 시 적용합니다.", 1, 0, ["Array.length", "Rect", "onSelectionChanged"], "selection", true, 1, 0, null, 1, 0, 5, 5, 1, true, 0],
+  ["14-01", "이미지·닉네임·소개 카드", "이미지·제목·설명", "이미지, 닉네임, 간단소개를 명확한 카드 구조로 배치합니다.", 1, 0, ["img", "article", "ControlNode"], null, false, 1, 0, null, 1, 0, 1, 1, 0, true, 0],
+  ["14-02", "이미지 오류 대체 처리", "이미지 오류 처리", "이미지 로드 실패 시 이니셜 대체 이미지를 표시합니다.", 1, 0, ["error event", "fallback image", "cleanup"], null, false, 1, 0, null, 1, 0, 1, 1, 0, true, 0],
+  ["14-03", "카드 데이터 없음 상태", "데이터 없음", "빈 배열일 때 명시적인 데이터 없음 화면을 표시합니다.", 1, 0, ["empty array", "empty state", "ControlNode"], null, false, 1, 0, null, 1, 0, 0, 0, 0, true, 0],
+  ["14-04", "카드 클릭과 선택 스타일", "카드 클릭·선택", "카드를 클릭하면 선택 스타일과 접근성 상태를 적용합니다.", 1, 0, ["data-interactive", "aria-pressed", "click"], "cardClick", false, 1, 0, null, 1, 0, 3, 3, 0, true, 1],
 ];
 
 const guideFolders = {
@@ -69,6 +81,9 @@ const guideFolders = {
   "09": "09-html-control-node",
   "10": "10-html-node-elements",
   "11": "11-html-node-events",
+  "12": "12-business-cards",
+  "13": "13-expand-on-selection",
+  "14": "14-image-title-description",
 };
 
 export const categories = [
@@ -82,16 +97,22 @@ export const categories = [
 ].map(([key, title]) => ({ key, title }));
 
 const readyLessons = readySpecs.map((spec, index) => {
-  const [key, title, shortTitle, description, expectedNodes, expectedLinks, objects, eventKind, requiresSelection, expectedVisibleNodes, expectedVisibleLinks, expectedExpandedNodes, expectedHtmlDom, expectedButtons] = spec;
+  const [key, title, shortTitle, description, expectedNodes, expectedLinks, objects, eventKind, requiresSelection, expectedVisibleNodes, expectedVisibleLinks, expectedExpandedNodes, expectedHtmlDom, expectedButtons, expectedCards, expectedCardDom, expectedSelectedNodes, expectedCardExpanded, expectedSelectedCards] = spec;
   const category = key.slice(0, 2);
   return {
     key, category, title, shortTitle, description, expectedNodes, expectedLinks, objects,
     eventKind: eventKind || null,
     requiresSelection: Boolean(requiresSelection),
     tracksTreeState: Number(category) >= 6 && Number(category) <= 8,
-    tracksHtmlDom: Number(category) >= 9 && Number(category) <= 11,
+    tracksHtmlDom: Number(category) >= 9 && Number(category) <= 14,
+    tracksCardState: Number(category) >= 12 && Number(category) <= 14,
     expectedHtmlDom: expectedHtmlDom ?? 0,
     expectedButtons: expectedButtons ?? 0,
+    expectedCards: expectedCards ?? 0,
+    expectedCardDom: expectedCardDom ?? 0,
+    expectedSelectedNodes: expectedSelectedNodes ?? 0,
+    expectedCardExpanded: expectedCardExpanded ?? false,
+    expectedSelectedCards: expectedSelectedCards ?? 0,
     expectedVisibleNodes: expectedVisibleNodes ?? expectedNodes,
     expectedVisibleLinks: expectedVisibleLinks ?? expectedLinks,
     expectedExpandedNodes: expectedExpandedNodes ?? null,
@@ -109,7 +130,7 @@ const readyLessons = readySpecs.map((spec, index) => {
 });
 
 const plannedLessons = categories
-  .filter(({ key }) => Number(key) === 0 || Number(key) >= 12)
+  .filter(({ key }) => Number(key) === 0 || Number(key) >= 15)
   .map(({ key, title }) => ({
     key: `${key}-01`,
     category: key,
