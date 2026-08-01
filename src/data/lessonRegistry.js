@@ -44,6 +44,16 @@ import Step0803RestoreState from "../examples/08-collapse-expand/Step0803Restore
 import Step0804CollapseAll from "../examples/08-collapse-expand/Step0804CollapseAll";
 import Step0805ExpandAll from "../examples/08-collapse-expand/Step0805ExpandAll";
 import Step0806ExpandToDepth from "../examples/08-collapse-expand/Step0806ExpandToDepth";
+import Step0901HtmlText from "../examples/09-html-control-node/Step0901HtmlText";
+import Step0902TitleDescription from "../examples/09-html-control-node/Step0902TitleDescription";
+import Step0903Image from "../examples/09-html-control-node/Step0903Image";
+import Step0904Alternatives from "../examples/09-html-control-node/Step0904Alternatives";
+import Step1001ButtonStyle from "../examples/10-html-node-elements/Step1001ButtonStyle";
+import Step1002ButtonDomSearch from "../examples/10-html-node-elements/Step1002ButtonDomSearch";
+import Step1101ButtonClick from "../examples/11-html-node-events/Step1101ButtonClick";
+import Step1102MoveClickSeparation from "../examples/11-html-node-events/Step1102MoveClickSeparation";
+import Step1103PreventDuplicate from "../examples/11-html-node-events/Step1103PreventDuplicate";
+import Step1104CleanupOnUnmount from "../examples/11-html-node-events/Step1104CleanupOnUnmount";
 
 export const lessonRegistry = {
   "01-01": Step0101EmptyDiagram,
@@ -92,4 +102,14 @@ export const lessonRegistry = {
   "08-04": Step0804CollapseAll,
   "08-05": Step0805ExpandAll,
   "08-06": Step0806ExpandToDepth,
+  "09-01": Step0901HtmlText,
+  "09-02": Step0902TitleDescription,
+  "09-03": Step0903Image,
+  "09-04": Step0904Alternatives,
+  "10-01": Step1001ButtonStyle,
+  "10-02": Step1002ButtonDomSearch,
+  "11-01": Step1101ButtonClick,
+  "11-02": Step1102MoveClickSeparation,
+  "11-03": Step1103PreventDuplicate,
+  "11-04": Step1104CleanupOnUnmount,
 };

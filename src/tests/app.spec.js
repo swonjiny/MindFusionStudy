@@ -37,9 +37,9 @@ test("애플리케이션 공통 화면과 탭이 동작한다", async ({ page })
 test("모든 예제 JSX가 프로젝트 내부 모듈 없이 독립 실행 가능하다", () => {
   const examplesRoot = join(process.cwd(), "src", "examples");
   const files = readdirSync(examplesRoot, { recursive: true })
-    .filter((file) => typeof file === "string" && /^0[1-8]-/.test(file) && file.endsWith(".jsx"));
+    .filter((file) => typeof file === "string" && /^(0[1-9]|1[01])-/.test(file) && file.endsWith(".jsx"));
 
-  expect(files).toHaveLength(46);
+  expect(files).toHaveLength(56);
   for (const file of files) {
     const source = readFileSync(join(examplesRoot, file), "utf8");
     expect(source, file).not.toContain('from "../');
@@ -116,10 +116,10 @@ test("이전·다음 이동과 준비 중 화면이 동작한다", async ({ page
   await page.getByRole("button", { name: "이전 예제", exact: true }).click();
   await expect(page.locator(".lesson-number")).toHaveText("02-01");
 
-  await page.getByText("09. HTML 요소 노드 기초", { exact: true }).click();
-  await page.getByText("09-01 준비 중", { exact: true }).click();
+  await page.getByText("12. 명함형 카드 콘텐츠", { exact: true }).click();
+  await page.getByText("12-01 준비 중", { exact: true }).click();
   await expect(page.getByTestId("planned-lesson")).toBeVisible();
-  await expect(page.getByText(/3차 구현 범위에는 포함되지 않습니다/)).toBeVisible();
+  await expect(page.getByText(/4차 구현 범위에는 포함되지 않습니다/)).toBeVisible();
 
   expect(errors).toEqual([]);
 });
@@ -197,5 +197,79 @@ test("실제 캔버스 노드 클릭과 더블 클릭 이벤트가 수신된다"
   await page.mouse.dblclick(secondBox.x + secondBox.width * 0.25, secondBox.y + secondBox.height * 0.35);
   await expect(page.getByTestId("last-event")).toContainText("더블 클릭");
 
+  expect(errors).toEqual([]);
+});
+
+test("09-01 ControlNode가 실제 HTML DOM을 만든다", async ({ page }) => {
+  const errors = collectBrowserErrors(page);
+  await page.goto("/");
+  await page.getByText("09. HTML 요소 노드 기초", { exact: true }).click();
+  await page.getByText("09-01 HTML 텍스트", { exact: true }).click();
+  await page.getByRole("tab", { name: "실행 화면" }).click();
+
+  await expect(page.locator('[data-mf-html-node="09-01"]')).toHaveText("실제 HTML 텍스트");
+  await expect(page.getByTestId("verification-html-dom")).toContainText("success");
+  expect(errors).toEqual([]);
+});
+
+test("09~10 HTML 노드와 네 가지 구현 방식이 실제 DOM 기준으로 검증된다", async ({ page }) => {
+  const errors = collectBrowserErrors(page);
+  await page.goto("/");
+
+  const lessons = [
+    ["09-01", "HTML 텍스트", 1, 0],
+    ["09-02", "제목과 설명", 1, 0],
+    ["09-03", "이미지", 1, 0],
+    ["09-04", "대체 방식 비교", 3, 0],
+    ["10-01", "버튼 모양", 1, 1],
+    ["10-02", "버튼 DOM 검색", 1, 1],
+  ];
+
+  for (const [key, title, htmlCount, buttonCount] of lessons) {
+    const item = page.getByText(`${key} ${title}`, { exact: true });
+    if (!(await item.isVisible())) await page.getByText(new RegExp(`^${key.slice(0, 2)}\\. `)).click();
+    await item.click();
+    await page.getByRole("tab", { name: "실행 화면" }).click();
+    await expect(page.getByTestId("verification-html-dom")).toContainText(`현재 ${htmlCount}개`);
+    await expect(page.getByTestId("verification-html-dom")).toContainText("success");
+    await expect(page.getByTestId("verification-button-dom")).toContainText(`현재 ${buttonCount}개`);
+    await expect(page.getByTestId("verification-button-dom")).toContainText("success");
+  }
+  await expect(page.getByTestId("dom-search-result")).toContainText("content API DOM 확인");
+
+  await expect(page.locator('[data-alternative="control"]')).toHaveCount(0);
+  await page.getByText("09-04 대체 방식 비교", { exact: true }).click();
+  await expect(page.locator('[data-alternative="control"]')).toHaveCount(1);
+  await expect(page.locator('[data-alternative="portal"]')).toHaveCount(1);
+  await expect(page.locator('[data-alternative="overlay"]')).toHaveCount(1);
+  await expect(page.getByTestId("verification-2")).toContainText("현재 2개");
+  expect(errors).toEqual([]);
+});
+
+test("11 HTML 버튼 클릭·입력 분리·중복 방지·cleanup이 동작한다", async ({ page }) => {
+  const errors = collectBrowserErrors(page);
+  await page.goto("/");
+  await page.getByText("11. HTML 노드 버튼 이벤트", { exact: true }).click();
+
+  await page.getByText("11-01 버튼 클릭", { exact: true }).click();
+  await page.getByRole("tab", { name: "실행 화면" }).click();
+  await page.getByTestId("control-click-button").click();
+  await expect(page.getByTestId("button-click-count")).toHaveText("버튼 클릭 1회");
+  await expect(page.getByTestId("verification-event")).toContainText("success");
+
+  await page.getByText("11-02 이동·클릭 분리", { exact: true }).click();
+  await page.getByTestId("separated-button").click();
+  await expect(page.getByTestId("separation-result")).toHaveText("버튼 클릭과 노드 이동이 분리됨");
+
+  await page.getByText("11-03 중복 등록 방지", { exact: true }).click();
+  await expect(page.getByTestId("listener-count")).toContainText("1회");
+  await page.getByTestId("dedup-button").click();
+  await expect(page.getByTestId("dedup-click-count")).toHaveText("클릭 1회");
+
+  await page.getByText("11-04 이벤트 해제", { exact: true }).click();
+  await page.getByTestId("cleanup-button").click();
+  await expect(page.getByTestId("cleanup-status")).toContainText("클릭 1회");
+  await page.getByText("11-03 중복 등록 방지", { exact: true }).click();
+  await expect.poll(() => page.evaluate(() => window.__mfControlNodeCleanup)).toBe(1);
   expect(errors).toEqual([]);
 });

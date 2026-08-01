@@ -80,6 +80,22 @@ export default function VerificationPanel({ lesson, status, onReset }) {
       ],
     );
   }
+  if (lesson.tracksHtmlDom) {
+    checks.push(
+      [
+        "HTML DOM",
+        `${lesson.expectedHtmlDom}개가 필요하며 현재 ${status.htmlDomCount ?? 0}개입니다.`,
+        status.htmlDomCount === lesson.expectedHtmlDom,
+        "verification-html-dom",
+      ],
+      [
+        "버튼 DOM",
+        `${lesson.expectedButtons}개가 필요하며 현재 ${status.buttonDomCount ?? 0}개입니다.`,
+        status.buttonDomCount === lesson.expectedButtons,
+        "verification-button-dom",
+      ],
+    );
+  }
   const passedCount = checks.filter((item) => item[2]).length;
 
   return (

@@ -60,6 +60,16 @@ const sourceFileByLesson = {
   "08-04": "/src/examples/08-collapse-expand/Step0804CollapseAll.jsx",
   "08-05": "/src/examples/08-collapse-expand/Step0805ExpandAll.jsx",
   "08-06": "/src/examples/08-collapse-expand/Step0806ExpandToDepth.jsx",
+  "09-01": "/src/examples/09-html-control-node/Step0901HtmlText.jsx",
+  "09-02": "/src/examples/09-html-control-node/Step0902TitleDescription.jsx",
+  "09-03": "/src/examples/09-html-control-node/Step0903Image.jsx",
+  "09-04": "/src/examples/09-html-control-node/Step0904Alternatives.jsx",
+  "10-01": "/src/examples/10-html-node-elements/Step1001ButtonStyle.jsx",
+  "10-02": "/src/examples/10-html-node-elements/Step1002ButtonDomSearch.jsx",
+  "11-01": "/src/examples/11-html-node-events/Step1101ButtonClick.jsx",
+  "11-02": "/src/examples/11-html-node-events/Step1102MoveClickSeparation.jsx",
+  "11-03": "/src/examples/11-html-node-events/Step1103PreventDuplicate.jsx",
+  "11-04": "/src/examples/11-html-node-events/Step1104CleanupOnUnmount.jsx",
 };
 
 export default function SourceCodeViewer({ lesson }) {

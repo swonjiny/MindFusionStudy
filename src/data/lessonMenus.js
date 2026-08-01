@@ -45,6 +45,16 @@ const readySpecs = [
   ["08-04", "전체 트리 접기", "전체 접기", "모든 가지를 접어 최상위 루트만 표시합니다.", 7, 6, ["Diagram.nodes", "visible"], null, false, 1, 0, 0],
   ["08-05", "전체 트리 펼치기", "전체 펼치기", "접힌 모든 가지를 펼쳐 전체 구조를 표시합니다.", 6, 5, ["Diagram.links", "expanded"], null, false, 6, 5, 3],
   ["08-06", "특정 깊이까지만 펼치기", "깊이 제한 펼치기", "재귀 순회로 2단계까지만 노드와 연결선을 표시합니다.", 7, 6, ["outgoingLinks", "visible"], null, false, 3, 2, 1],
+  ["09-01", "HTML 텍스트만 표시", "HTML 텍스트", "ControlNode 템플릿으로 실제 HTML 텍스트를 표시합니다.", 1, 0, ["ControlNode", "template", "nodeDomCreated"], null, false, 1, 0, null, 1, 0],
+  ["09-02", "HTML 제목과 설명", "제목과 설명", "제목과 설명을 시맨틱 HTML 요소로 구성합니다.", 1, 0, ["ControlNode", "article", "getContent"], null, false, 1, 0, null, 1, 0],
+  ["09-03", "HTML 이미지 표시", "이미지", "ControlNode 안에 복사 가능한 data URI 이미지를 표시합니다.", 1, 0, ["ControlNode", "img", "data URI"], null, false, 1, 0, null, 1, 0],
+  ["09-04", "ControlNode 대체 방식 비교", "대체 방식 비교", "ControlNode, CompositeNode, React Portal, 외부 DOM Overlay를 실제 렌더링해 비교합니다.", 2, 0, ["ControlNode", "CompositeNode", "createPortal", "DOM Overlay"], null, false, 2, 0, null, 3, 0],
+  ["10-01", "HTML 버튼 모양", "버튼 모양", "ControlNode 안에 data-interactive 버튼의 모양을 만듭니다.", 1, 0, ["button", "data-interactive", "template"], null, false, 1, 0, null, 1, 1],
+  ["10-02", "버튼 DOM 검색", "버튼 DOM 검색", "nodeDomCreated 시점에 getContent와 querySelector로 버튼 DOM을 찾습니다.", 1, 0, ["nodeDomCreated", "getContent", "querySelector"], null, false, 1, 0, null, 1, 1],
+  ["11-01", "HTML 버튼 클릭 이벤트", "버튼 클릭", "실제 버튼 DOM에 클릭 리스너를 연결하고 결과를 표시합니다.", 1, 0, ["addEventListener", "click", "data-interactive"], "buttonClick", false, 1, 0, null, 1, 1],
+  ["11-02", "노드 이동과 버튼 클릭 분리", "이동·클릭 분리", "노드 영역 드래그와 내부 버튼 클릭 입력을 분리합니다.", 1, 0, ["data-interactive", "stopPropagation", "bounds"], "buttonClick", false, 1, 0, null, 1, 1],
+  ["11-03", "이벤트 중복 등록 방지", "중복 등록 방지", "WeakSet과 Map으로 같은 버튼에 리스너가 두 번 등록되지 않게 합니다.", 1, 0, ["WeakSet", "Map", "addEventListener"], "buttonClick", false, 1, 0, null, 1, 1],
+  ["11-04", "컴포넌트 제거 시 이벤트 해제", "이벤트 해제", "cleanup에서 직접 등록한 모든 DOM 이벤트 리스너를 해제합니다.", 1, 0, ["removeEventListener", "useEffect cleanup", "Map"], "buttonClick", false, 1, 0, null, 1, 1],
 ];
 
 const guideFolders = {
@@ -56,6 +66,9 @@ const guideFolders = {
   "06": "06-parent-child-tree",
   "07": "07-tree-layout",
   "08": "08-collapse-expand",
+  "09": "09-html-control-node",
+  "10": "10-html-node-elements",
+  "11": "11-html-node-events",
 };
 
 export const categories = [
@@ -69,13 +82,16 @@ export const categories = [
 ].map(([key, title]) => ({ key, title }));
 
 const readyLessons = readySpecs.map((spec, index) => {
-  const [key, title, shortTitle, description, expectedNodes, expectedLinks, objects, eventKind, requiresSelection, expectedVisibleNodes, expectedVisibleLinks, expectedExpandedNodes] = spec;
+  const [key, title, shortTitle, description, expectedNodes, expectedLinks, objects, eventKind, requiresSelection, expectedVisibleNodes, expectedVisibleLinks, expectedExpandedNodes, expectedHtmlDom, expectedButtons] = spec;
   const category = key.slice(0, 2);
   return {
     key, category, title, shortTitle, description, expectedNodes, expectedLinks, objects,
     eventKind: eventKind || null,
     requiresSelection: Boolean(requiresSelection),
     tracksTreeState: Number(category) >= 6 && Number(category) <= 8,
+    tracksHtmlDom: Number(category) >= 9 && Number(category) <= 11,
+    expectedHtmlDom: expectedHtmlDom ?? 0,
+    expectedButtons: expectedButtons ?? 0,
     expectedVisibleNodes: expectedVisibleNodes ?? expectedNodes,
     expectedVisibleLinks: expectedVisibleLinks ?? expectedLinks,
     expectedExpandedNodes: expectedExpandedNodes ?? null,
@@ -93,7 +109,7 @@ const readyLessons = readySpecs.map((spec, index) => {
 });
 
 const plannedLessons = categories
-  .filter(({ key }) => Number(key) === 0 || Number(key) >= 9)
+  .filter(({ key }) => Number(key) === 0 || Number(key) >= 12)
   .map(({ key, title }) => ({
     key: `${key}-01`,
     category: key,

@@ -25,6 +25,8 @@ const emptyStatus = {
   visibleNodeCount: 0,
   visibleLinkCount: 0,
   expandedNodeCount: 0,
+  htmlDomCount: 0,
+  buttonDomCount: 0,
   consoleErrorCount: 0,
 };
 
