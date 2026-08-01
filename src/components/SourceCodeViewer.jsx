@@ -12,6 +12,11 @@ const guideSources = import.meta.glob("/src/guides/**/*.md", {
   import: "default",
   eager: true,
 });
+const integratedSources = import.meta.glob("/src/features/integrated/*.{js,jsx,css}", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+});
 
 const sourceFileByLesson = {
   "01-01": "/src/examples/01-diagram-basic/Step0101EmptyDiagram.jsx",
@@ -82,6 +87,20 @@ const sourceFileByLesson = {
   "14-02": "/src/examples/14-image-title-description/Step1402ImageFallback.jsx",
   "14-03": "/src/examples/14-image-title-description/Step1403EmptyData.jsx",
   "14-04": "/src/examples/14-image-title-description/Step1404CardClickSelection.jsx",
+  "15-01": "/src/examples/15-composite-content-tree/Step1501RichRootNode.jsx",
+  "15-02": "/src/examples/15-composite-content-tree/Step1502ChildrenGrandchildren.jsx",
+  "15-03": "/src/examples/15-composite-content-tree/Step1503RecursiveTreeControls.jsx",
+  "16-01": "/src/examples/16-external-tools/Step1601CenterSelectedNode.jsx",
+  "16-02": "/src/examples/16-external-tools/Step1602ViewportControls.jsx",
+  "16-03": "/src/examples/16-external-tools/Step1603DetailPanel.jsx",
+  "17-01": "/src/examples/17-data-integration/Step1701JsonData.jsx",
+  "17-02": "/src/examples/17-data-integration/Step1702MockApiLoading.jsx",
+  "17-03": "/src/examples/17-data-integration/Step1703DataError.jsx",
+  "17-04": "/src/examples/17-data-integration/Step1704EmptyData.jsx",
+  "18-01": "/src/examples/18-runtime-verification/Step1801SearchNodes.jsx",
+  "18-02": "/src/examples/18-runtime-verification/Step1802FilterNodes.jsx",
+  "18-03": "/src/examples/18-runtime-verification/Step1803AutomaticVerification.jsx",
+  "19-01": "/src/examples/19-final-example/Step1901IntegratedExplorer.jsx",
 };
 
 export default function SourceCodeViewer({ lesson }) {
@@ -90,6 +109,7 @@ export default function SourceCodeViewer({ lesson }) {
   const files = useMemo(() => {
     const jsxPath = sourceFileByLesson[lesson.key];
     const componentName = jsxPath.split("/").at(-1).replace(".jsx", "");
+    const usesIntegratedFeature = Number(lesson.category) >= 15;
     const graphPackage = lesson.category === "07" ? " @mindfusion/graphs" : "";
     const usage = `npm install react react-dom @mindfusion/diagramming @mindfusion/diagramming-react @mindfusion/drawing${graphPackage}
 
@@ -100,10 +120,15 @@ import ${componentName} from "./${componentName}";
 // MindFusion React 4.9.0 래퍼는 개발 환경의 StrictMode 이중 마운트를 지원하지 않습니다.
 createRoot(document.getElementById("root")).render(<${componentName} />);
 `;
+    const shared = Object.entries(integratedSources)
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([path, code]) => `// ${path}\n${code}`)
+      .join("\n\n");
     return {
       jsx: { path: jsxPath, code: exampleSources[jsxPath] || "" },
       usage: { path: "설치 및 App.jsx 사용 예시", code: usage },
       guide: { path: lesson.guidePath, code: guideSources[lesson.guidePath] || "" },
+      ...(usesIntegratedFeature ? { shared: { path: "/src/features/integrated/*", code: shared } } : {}),
     };
   }, [lesson]);
 
@@ -113,9 +138,10 @@ createRoot(document.getElementById("root")).render(<${componentName} />);
   };
 
   const items = [
-    ["jsx", "독립 실행 JSX"],
+    ["jsx", files.shared ? "단계 JSX" : "독립 실행 JSX"],
     ["usage", "설치·사용 방법"],
     ["guide", "Markdown"],
+    ...(files.shared ? [["shared", "공통 훅·유틸"]] : []),
   ].map(([key, label]) => ({
     key,
     label,
@@ -135,8 +161,8 @@ createRoot(document.getElementById("root")).render(<${componentName} />);
       <Alert
         type="success"
         showIcon
-        title="이 파일 하나만 복사하면 됩니다"
-        description="예제 JSX는 프로젝트 내부 공통 모듈이나 CSS를 참조하지 않습니다. 필요한 MindFusion 패키지를 설치하고 App.jsx에서 렌더링하면 바로 실행됩니다."
+        title={files.shared ? "단계 컴포넌트가 검증된 공통 구현을 재사용합니다" : "이 파일 하나만 복사하면 됩니다"}
+        description={files.shared ? "15~19는 최종 예제를 따로 다시 작성하지 않고 같은 훅·데이터·템플릿·스타일을 조합합니다. 공통 훅·유틸 탭에서 함께 필요한 파일을 확인할 수 있습니다." : "예제 JSX는 프로젝트 내부 공통 모듈이나 CSS를 참조하지 않습니다. 필요한 MindFusion 패키지를 설치하고 App.jsx에서 렌더링하면 바로 실행됩니다."}
       />
       <div className="section-toolbar">
         <Typography.Title level={4}>복사 가능한 독립 예제</Typography.Title>

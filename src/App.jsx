@@ -33,6 +33,8 @@ const emptyStatus = {
   selectedCardCount: 0,
   imageFallbackCount: 0,
   emptyDataVisible: false,
+  dataState: "loading",
+  integrationReady: false,
   consoleErrorCount: 0,
 };
 

@@ -7,13 +7,13 @@ export default function PlannedLesson({ lesson, onBack }) {
       <Result
         icon={<LockOutlined />}
         title={`${lesson.category}. ${lesson.title}`}
-        subTitle="이 메뉴는 전체 학습 경로를 보여주기 위한 준비 중 항목입니다. 요청된 5차 구현 범위에는 포함되지 않습니다."
+        subTitle="이 항목은 전체 학습 경로를 안내하기 위한 시작 메뉴입니다. 예제 학습은 01부터 순서대로 진행할 수 있습니다."
         extra={<Button type="primary" onClick={onBack}>구현된 예제로 돌아가기</Button>}
       />
       <div className="planned-note">
-        <Tag>다음 개발 단계</Tag>
+        <Tag>학습 안내</Tag>
         <Typography.Text>
-          사용자 지시 없이 15 이후 노드 편집 기능을 구현하지 않습니다.
+          현재 01부터 19까지의 단계별 예제와 최종 종합 예제가 구현되어 있습니다.
         </Typography.Text>
       </div>
     </div>

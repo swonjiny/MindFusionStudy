@@ -66,6 +66,20 @@ import Step1401ProfileContent from "../examples/14-image-title-description/Step1
 import Step1402ImageFallback from "../examples/14-image-title-description/Step1402ImageFallback";
 import Step1403EmptyData from "../examples/14-image-title-description/Step1403EmptyData";
 import Step1404CardClickSelection from "../examples/14-image-title-description/Step1404CardClickSelection";
+import Step1501RichRootNode from "../examples/15-composite-content-tree/Step1501RichRootNode";
+import Step1502ChildrenGrandchildren from "../examples/15-composite-content-tree/Step1502ChildrenGrandchildren";
+import Step1503RecursiveTreeControls from "../examples/15-composite-content-tree/Step1503RecursiveTreeControls";
+import Step1601CenterSelectedNode from "../examples/16-external-tools/Step1601CenterSelectedNode";
+import Step1602ViewportControls from "../examples/16-external-tools/Step1602ViewportControls";
+import Step1603DetailPanel from "../examples/16-external-tools/Step1603DetailPanel";
+import Step1701JsonData from "../examples/17-data-integration/Step1701JsonData";
+import Step1702MockApiLoading from "../examples/17-data-integration/Step1702MockApiLoading";
+import Step1703DataError from "../examples/17-data-integration/Step1703DataError";
+import Step1704EmptyData from "../examples/17-data-integration/Step1704EmptyData";
+import Step1801SearchNodes from "../examples/18-runtime-verification/Step1801SearchNodes";
+import Step1802FilterNodes from "../examples/18-runtime-verification/Step1802FilterNodes";
+import Step1803AutomaticVerification from "../examples/18-runtime-verification/Step1803AutomaticVerification";
+import Step1901IntegratedExplorer from "../examples/19-final-example/Step1901IntegratedExplorer";
 
 export const lessonRegistry = {
   "01-01": Step0101EmptyDiagram,
@@ -136,4 +150,18 @@ export const lessonRegistry = {
   "14-02": Step1402ImageFallback,
   "14-03": Step1403EmptyData,
   "14-04": Step1404CardClickSelection,
+  "15-01": Step1501RichRootNode,
+  "15-02": Step1502ChildrenGrandchildren,
+  "15-03": Step1503RecursiveTreeControls,
+  "16-01": Step1601CenterSelectedNode,
+  "16-02": Step1602ViewportControls,
+  "16-03": Step1603DetailPanel,
+  "17-01": Step1701JsonData,
+  "17-02": Step1702MockApiLoading,
+  "17-03": Step1703DataError,
+  "17-04": Step1704EmptyData,
+  "18-01": Step1801SearchNodes,
+  "18-02": Step1802FilterNodes,
+  "18-03": Step1803AutomaticVerification,
+  "19-01": Step1901IntegratedExplorer,
 };

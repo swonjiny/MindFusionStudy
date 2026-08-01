@@ -67,6 +67,20 @@ const readySpecs = [
   ["14-02", "이미지 오류 대체 처리", "이미지 오류 처리", "이미지 로드 실패 시 이니셜 대체 이미지를 표시합니다.", 1, 0, ["error event", "fallback image", "cleanup"], null, false, 1, 0, null, 1, 0, 1, 1, 0, true, 0],
   ["14-03", "카드 데이터 없음 상태", "데이터 없음", "빈 배열일 때 명시적인 데이터 없음 화면을 표시합니다.", 1, 0, ["empty array", "empty state", "ControlNode"], null, false, 1, 0, null, 1, 0, 0, 0, 0, true, 0],
   ["14-04", "카드 클릭과 선택 스타일", "카드 클릭·선택", "카드를 클릭하면 선택 스타일과 접근성 상태를 적용합니다.", 1, 0, ["data-interactive", "aria-pressed", "click"], "cardClick", false, 1, 0, null, 1, 0, 3, 3, 0, true, 1],
+  ["15-01", "메타정보가 있는 루트 노드", "풍부한 루트 노드", "이미지·제목·설명·메타정보와 선택 카드를 가진 루트 노드를 만듭니다.", 1, 0, ["ControlNode", "rootNodeHtml", "cardBounds"], null, false, 1, 0, null, 1, 0, 3, 0, 0, false, 0, "success"],
+  ["15-02", "자식·손자 복합 콘텐츠 트리", "자식·손자 트리", "HTML 루트와 ShapeNode 자식·손자를 JSON 관계로 연결합니다.", 10, 9, ["ShapeNode", "ControlNode", "parentId"], null, false, 10, 9, null, 1, 0, 3, 0, 0, false, 0, "success"],
+  ["15-03", "복합 트리 재귀 접기·펼치기", "재귀 트리 제어", "선택 가지와 전체 트리를 재귀적으로 접고 펼칩니다.", 10, 9, ["outgoingLinks", "visible", "expanded"], "treeControl", false, 10, 9, null, 1, 0, 3, 0, 0, false, 0, "success"],
+  ["16-01", "선택 노드 중심 이동", "선택 중심 이동", "외부 도구에서 선택 노드 중심으로 DiagramView를 이동합니다.", 10, 9, ["scrollTo", "bounds.center", "DiagramView ref"], "viewport", false, 10, 9, null, 1, 0, 3, 0, 0, false, 0, "success"],
+  ["16-02", "확대·축소·화면 맞춤", "화면 도구", "외부 버튼으로 확대·축소와 전체 화면 맞춤을 실행합니다.", 10, 9, ["zoomFactor", "zoomToFit", "DiagramView"], "viewport", false, 10, 9, null, 1, 0, 3, 0, 0, false, 0, "success"],
+  ["16-03", "선택 노드 상세 패널", "상세 패널", "선택 데이터를 Diagram 밖 React 상세 패널에 표시합니다.", 10, 9, ["onSelectionChanged", "React state", "detail panel"], "selection", false, 10, 9, null, 1, 0, 3, 0, 0, false, 0, "success"],
+  ["17-01", "JSON 데이터로 트리 생성", "JSON 데이터", "root와 nodes JSON으로 같은 복합 트리를 생성합니다.", 10, 9, ["JSON", "Map", "parentId"], null, false, 10, 9, null, 1, 0, 3, 0, 0, false, 0, "success"],
+  ["17-02", "Mock API 로딩 상태", "Mock API 로딩", "비동기 로딩 상태 후 공통 JSON 생성 경로를 실행합니다.", 10, 9, ["Promise", "loading", "Mock API"], null, false, 10, 9, null, 1, 0, 3, 0, 0, false, 0, "success"],
+  ["17-03", "Mock API 오류 상태", "데이터 오류", "API 실패를 처리하고 오류 안내와 빈 Diagram 상태를 표시합니다.", 0, 0, ["Promise.reject", "error state", "catch"], null, false, 0, 0, null, 0, 0, 0, 0, 0, false, 0, "error"],
+  ["17-04", "데이터 없음 상태", "데이터 없음", "정상 빈 응답을 오류와 구분해 안내합니다.", 0, 0, ["empty state", "root", "nodes"], null, false, 0, 0, null, 0, 0, 0, 0, 0, false, 0, "empty"],
+  ["18-01", "노드 검색", "검색", "제목·설명 검색 결과와 조상 노드만 표시합니다.", 10, 9, ["search", "visible", "ancestor"], "search", false, 10, 9, null, 1, 0, 3, 0, 0, false, 0, "success"],
+  ["18-02", "노드 유형 필터", "필터", "팀·역할 유형으로 노드를 필터링하고 전체 상태를 복원합니다.", 10, 9, ["filter", "type", "visible"], "filter", false, 10, 9, null, 1, 0, 3, 0, 0, false, 0, "success"],
+  ["18-03", "전체 실행 자동 검증", "종합 자동 검증", "데이터·DOM·노드·연결선·콘솔 상태를 한 번에 검증합니다.", 10, 9, ["verification", "DOM", "console"], null, false, 10, 9, null, 1, 0, 3, 0, 0, false, 0, "success"],
+  ["19-01", "최종 종합 조직 탐색기", "최종 종합 예제", "15~18의 공통 훅과 유틸로 모든 기능을 한 화면에 통합합니다.", 10, 9, ["useIntegratedDiagram", "IntegratedDiagramExample", "Playwright"], "integrated", false, 10, 9, null, 1, 0, 3, 0, 0, false, 0, "success"],
 ];
 
 const guideFolders = {
@@ -84,6 +98,11 @@ const guideFolders = {
   "12": "12-business-cards",
   "13": "13-expand-on-selection",
   "14": "14-image-title-description",
+  "15": "15-composite-content-tree",
+  "16": "16-external-tools",
+  "17": "17-data-integration",
+  "18": "18-runtime-verification",
+  "19": "19-final-example",
 };
 
 export const categories = [
@@ -92,20 +111,21 @@ export const categories = [
   ["06", "부모·자식 트리 구조"], ["07", "트리 배치와 레이아웃"], ["08", "접기·펼치기"],
   ["09", "HTML 요소 노드 기초"], ["10", "HTML 노드 내부 요소"], ["11", "HTML 노드 버튼 이벤트"],
   ["12", "명함형 카드 콘텐츠"], ["13", "선택 시 카드 펼치기"], ["14", "이미지·제목·설명 노드"],
-  ["15", "노드 편집"], ["16", "데이터 저장과 불러오기"], ["17", "스타일과 테마"],
-  ["18", "성능과 대규모 Diagram"], ["19", "완성 예제"],
+  ["15", "복합 콘텐츠 트리"], ["16", "외부 도구 패널"], ["17", "데이터 연동"],
+  ["18", "실행 검증"], ["19", "완성 예제"],
 ].map(([key, title]) => ({ key, title }));
 
 const readyLessons = readySpecs.map((spec, index) => {
-  const [key, title, shortTitle, description, expectedNodes, expectedLinks, objects, eventKind, requiresSelection, expectedVisibleNodes, expectedVisibleLinks, expectedExpandedNodes, expectedHtmlDom, expectedButtons, expectedCards, expectedCardDom, expectedSelectedNodes, expectedCardExpanded, expectedSelectedCards] = spec;
+  const [key, title, shortTitle, description, expectedNodes, expectedLinks, objects, eventKind, requiresSelection, expectedVisibleNodes, expectedVisibleLinks, expectedExpandedNodes, expectedHtmlDom, expectedButtons, expectedCards, expectedCardDom, expectedSelectedNodes, expectedCardExpanded, expectedSelectedCards, expectedDataState] = spec;
   const category = key.slice(0, 2);
   return {
     key, category, title, shortTitle, description, expectedNodes, expectedLinks, objects,
     eventKind: eventKind || null,
     requiresSelection: Boolean(requiresSelection),
     tracksTreeState: Number(category) >= 6 && Number(category) <= 8,
-    tracksHtmlDom: Number(category) >= 9 && Number(category) <= 14,
-    tracksCardState: Number(category) >= 12 && Number(category) <= 14,
+    tracksHtmlDom: Number(category) >= 9,
+    tracksCardState: Number(category) >= 12,
+    tracksIntegrated: Number(category) >= 15,
     expectedHtmlDom: expectedHtmlDom ?? 0,
     expectedButtons: expectedButtons ?? 0,
     expectedCards: expectedCards ?? 0,
@@ -113,6 +133,7 @@ const readyLessons = readySpecs.map((spec, index) => {
     expectedSelectedNodes: expectedSelectedNodes ?? 0,
     expectedCardExpanded: expectedCardExpanded ?? false,
     expectedSelectedCards: expectedSelectedCards ?? 0,
+    expectedDataState: expectedDataState ?? null,
     expectedVisibleNodes: expectedVisibleNodes ?? expectedNodes,
     expectedVisibleLinks: expectedVisibleLinks ?? expectedLinks,
     expectedExpandedNodes: expectedExpandedNodes ?? null,
@@ -130,7 +151,7 @@ const readyLessons = readySpecs.map((spec, index) => {
 });
 
 const plannedLessons = categories
-  .filter(({ key }) => Number(key) === 0 || Number(key) >= 15)
+  .filter(({ key }) => Number(key) === 0 || Number(key) >= 20)
   .map(({ key, title }) => ({
     key: `${key}-01`,
     category: key,

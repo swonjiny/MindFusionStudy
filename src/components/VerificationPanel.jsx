@@ -105,6 +105,14 @@ export default function VerificationPanel({ lesson, status, onReset }) {
       ["선택 카드", `${lesson.expectedSelectedCards}개가 필요하며 현재 ${status.selectedCardCount ?? 0}개입니다.`, (status.selectedCardCount ?? 0) === lesson.expectedSelectedCards, "verification-selected-card"],
     );
   }
+  if (lesson.tracksIntegrated) {
+    checks.push(
+      ["데이터 상태", `현재 ${status.dataState || "대기"} 상태입니다.`, status.dataState === lesson.expectedDataState, "verification-data-state"],
+      ["visible 노드", `${lesson.expectedVisibleNodes}개 기준 · 현재 ${status.visibleNodeCount ?? 0}개`, status.visibleNodeCount === lesson.expectedVisibleNodes, "verification-integrated-visible-nodes"],
+      ["visible 연결선", `${lesson.expectedVisibleLinks}개 기준 · 현재 ${status.visibleLinkCount ?? 0}개`, status.visibleLinkCount === lesson.expectedVisibleLinks, "verification-integrated-visible-links"],
+      ["통합 준비", lesson.expectedDataState === "success" ? "트리와 도구가 준비되어야 합니다." : "상태 화면이 안전하게 처리되어야 합니다.", lesson.expectedDataState === "success" ? Boolean(status.integrationReady) : !status.integrationReady, "verification-integration-ready"],
+    );
+  }
   const passedCount = checks.filter((item) => item[2]).length;
 
   return (
@@ -142,6 +150,7 @@ export default function VerificationPanel({ lesson, status, onReset }) {
           {lesson.eventKind && <Typography.Text>• 선택·클릭 이벤트 로그가 즉시 갱신되는지 확인</Typography.Text>}
           {lesson.tracksTreeState && <Typography.Text>• 접기·펼치기 후 노드와 연결선이 함께 표시·숨김되는지 확인</Typography.Text>}
           {lesson.tracksCardState && <Typography.Text>• 카드 수, 선택 상태, 확장 크기와 DOM 수가 함께 갱신되는지 확인</Typography.Text>}
+          {lesson.tracksIntegrated && <Typography.Text>• 데이터 상태와 실제 visible 트리 수가 통합 기준과 일치하는지 확인</Typography.Text>}
           <Typography.Text>• 텍스트와 색상이 설명과 일치하는지 확인</Typography.Text>
         </Space>
       </Card>

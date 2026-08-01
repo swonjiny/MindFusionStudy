@@ -34,18 +34,27 @@ test("애플리케이션 공통 화면과 탭이 동작한다", async ({ page })
   expect(errors).toEqual([]);
 });
 
-test("모든 예제 JSX가 프로젝트 내부 모듈 없이 독립 실행 가능하다", () => {
+test("01~14 예제는 독립 실행되고 15~19는 공통 통합 모듈을 재사용한다", () => {
   const examplesRoot = join(process.cwd(), "src", "examples");
-  const files = readdirSync(examplesRoot, { recursive: true })
+  const allFiles = readdirSync(examplesRoot, { recursive: true })
     .filter((file) => typeof file === "string" && /^(0[1-9]|1[0-4])-/.test(file) && file.endsWith(".jsx"));
 
-  expect(files).toHaveLength(68);
-  for (const file of files) {
+  expect(allFiles).toHaveLength(68);
+  for (const file of allFiles) {
     const source = readFileSync(join(examplesRoot, file), "utf8");
     expect(source, file).not.toContain('from "../');
     expect(source, file).not.toContain('from "./');
     expect(source, file).toContain("@mindfusion/diagramming");
     expect(source, file).toContain("@mindfusion/diagramming-react");
+    expect(source, file).toContain("export default function");
+  }
+
+  const integratedFiles = readdirSync(examplesRoot, { recursive: true })
+    .filter((file) => typeof file === "string" && /^(1[5-9])-/.test(file) && file.endsWith(".jsx"));
+  expect(integratedFiles).toHaveLength(14);
+  for (const file of integratedFiles) {
+    const source = readFileSync(join(examplesRoot, file), "utf8");
+    expect(source, file).toContain("features/integrated/IntegratedDiagramExample");
     expect(source, file).toContain("export default function");
   }
 });
@@ -116,10 +125,10 @@ test("이전·다음 이동과 준비 중 화면이 동작한다", async ({ page
   await page.getByRole("button", { name: "이전 예제", exact: true }).click();
   await expect(page.locator(".lesson-number")).toHaveText("02-01");
 
-  await page.getByText("15. 노드 편집", { exact: true }).click();
-  await page.getByText("15-01 준비 중", { exact: true }).click();
+  await page.getByText("00. 시작하기", { exact: true }).click();
+  await page.getByText("00-01 준비 중", { exact: true }).click();
   await expect(page.getByTestId("planned-lesson")).toBeVisible();
-  await expect(page.getByText(/5차 구현 범위에는 포함되지 않습니다/)).toBeVisible();
+  await expect(page.getByText(/01부터 19까지의 단계별 예제/)).toBeVisible();
 
   expect(errors).toEqual([]);
 });
@@ -343,5 +352,124 @@ test("14 이미지 오류·빈 데이터·카드 클릭 선택 스타일을 처�
   await expect(page.getByTestId("card-selection-state")).toHaveText("카드 2 선택됨");
   await expect(page.getByTestId("verification-selected-card")).toContainText("success");
   await expect(page.getByTestId("verification-event")).toContainText("success");
+  expect(errors).toEqual([]);
+});
+
+test("15 복합 콘텐츠 트리와 재귀 전체 접기·펼치기가 동작한다", async ({ page }) => {
+  const errors = collectBrowserErrors(page);
+  await page.goto("/");
+  await page.getByText("15. 복합 콘텐츠 트리", { exact: true }).click();
+
+  await page.getByText("15-01 풍부한 루트 노드", { exact: true }).click();
+  await page.getByRole("tab", { name: "실행 화면" }).click();
+  await expect(page.locator('[data-mf-integrated-root="true"]')).toHaveCount(1);
+  await page.getByRole("button", { name: "루트 선택", exact: true }).click();
+  await expect(page.locator('[data-mf-integrated-root="true"]')).toHaveAttribute("data-expanded", "true");
+  await expect(page.locator('[data-mf-integrated-root="true"] [data-card-id]')).toHaveCount(3);
+
+  await page.getByText("15-03 재귀 트리 제어", { exact: true }).click();
+  await page.getByRole("button", { name: "전체 접기", exact: true }).click();
+  await expect(page.getByTestId("verification-integrated-visible-nodes")).toContainText("현재 1개");
+  await expect(page.getByTestId("verification-integrated-visible-links")).toContainText("현재 0개");
+  await page.getByRole("button", { name: "전체 펼치기", exact: true }).click();
+  await expect(page.getByTestId("verification-integrated-visible-nodes")).toContainText("현재 10개");
+  await expect(page.getByTestId("verification-integrated-visible-links")).toContainText("현재 9개");
+  expect(errors).toEqual([]);
+});
+
+test("16 외부 도구의 중심 이동·줌·화면 맞춤·상세 패널이 동작한다", async ({ page }) => {
+  const errors = collectBrowserErrors(page);
+  await page.goto("/");
+  await page.getByText("16. 외부 도구 패널", { exact: true }).click();
+
+  await page.getByText("16-01 선택 중심 이동", { exact: true }).click();
+  await page.getByRole("tab", { name: "실행 화면" }).click();
+  await page.getByRole("button", { name: "루트 선택", exact: true }).click();
+  await page.getByRole("button", { name: "선택 중심 이동", exact: true }).click();
+  await expect(page.getByTestId("last-action")).toContainText("선택 중심 이동");
+
+  await page.getByText("16-02 화면 도구", { exact: true }).click();
+  await page.getByRole("button", { name: "확대", exact: true }).click();
+  await expect(page.getByTestId("zoom-value")).toHaveText("120%");
+  await page.getByRole("button", { name: "축소", exact: true }).click();
+  await expect(page.getByTestId("zoom-value")).toHaveText("100%");
+  await page.getByRole("button", { name: "화면 맞춤", exact: true }).click();
+
+  await page.getByText("16-03 상세 패널", { exact: true }).click();
+  await page.getByRole("button", { name: "루트 선택", exact: true }).click();
+  await expect(page.getByTestId("detail-panel")).toContainText("MindFusion Studio");
+  expect(errors).toEqual([]);
+});
+
+test("17 JSON·Mock API의 로딩·오류·데이터 없음 상태가 구분된다", async ({ page }) => {
+  const errors = collectBrowserErrors(page);
+  await page.goto("/");
+  await page.getByText("17. 데이터 연동", { exact: true }).click();
+
+  await page.getByText("17-01 JSON 데이터", { exact: true }).click();
+  await page.getByRole("tab", { name: "실행 화면" }).click();
+  await expect(page.getByTestId("verification-2")).toContainText("현재 10개");
+
+  await page.getByText("17-02 Mock API 로딩", { exact: true }).click();
+  await expect(page.getByTestId("loading-state")).toBeVisible();
+  await expect(page.getByTestId("data-state")).toHaveText("데이터 준비 완료", { timeout: 3000 });
+  await expect(page.getByTestId("verification-data-state")).toContainText("success");
+
+  await page.getByText("17-03 데이터 오류", { exact: true }).click();
+  await expect(page.getByTestId("error-state")).toContainText("데이터를 불러오지 못했습니다.");
+  await expect(page.getByTestId("verification-data-state")).toContainText("success");
+
+  await page.getByText("17-04 데이터 없음", { exact: true }).click();
+  await expect(page.getByTestId("empty-state")).toContainText("표시할 데이터가 없습니다.");
+  await expect(page.getByTestId("verification-integration-ready")).toContainText("success");
+  expect(errors).toEqual([]);
+});
+
+test("18 검색·필터·종합 자동 검증이 실제 visible 상태를 반영한다", async ({ page }) => {
+  const errors = collectBrowserErrors(page);
+  await page.goto("/");
+  await page.getByText("18. 실행 검증", { exact: true }).click();
+
+  await page.getByText("18-01 검색", { exact: true }).click();
+  await page.getByRole("tab", { name: "실행 화면" }).click();
+  await page.getByLabel("노드 검색").fill("웹");
+  await page.getByRole("button", { name: "검색", exact: true }).click();
+  await expect(page.getByTestId("verification-integrated-visible-nodes")).toContainText("현재 3개");
+  await expect(page.getByTestId("verification-integrated-visible-links")).toContainText("현재 2개");
+
+  await page.getByText("18-02 필터", { exact: true }).click();
+  await page.getByLabel("유형").selectOption("team");
+  await expect(page.getByTestId("verification-integrated-visible-nodes")).toContainText("현재 4개");
+  await expect(page.getByTestId("verification-integrated-visible-links")).toContainText("현재 3개");
+
+  await page.getByText("18-03 종합 자동 검증", { exact: true }).click();
+  await expect(page.getByTestId("integrated-verification")).toContainText("✓ 노드 10개");
+  await expect(page.getByTestId("integrated-verification")).toContainText("✓ 연결선 9개");
+  await expect(page.getByTestId("verification-integration-ready")).toContainText("success");
+  expect(errors).toEqual([]);
+});
+
+test("19 최종 종합 예제의 전체 기능을 검증하고 스크린샷을 생성한다", async ({ page }) => {
+  test.setTimeout(60_000);
+  const errors = collectBrowserErrors(page);
+  await page.goto("/");
+  await page.getByText("19. 완성 예제", { exact: true }).click();
+  await page.getByText("19-01 최종 종합 예제", { exact: true }).click();
+  await page.getByRole("tab", { name: "실행 화면" }).click();
+
+  await page.getByRole("button", { name: "루트 선택", exact: true }).click();
+  await page.locator('[data-card-id="c2"]').click();
+  await expect(page.getByTestId("detail-panel")).toContainText("선택 카드: c2");
+  await page.getByRole("button", { name: "전체 접기", exact: true }).click();
+  await page.getByRole("button", { name: "전체 펼치기", exact: true }).click();
+  await page.getByRole("button", { name: "선택 중심 이동", exact: true }).click();
+  await page.getByRole("button", { name: "확대", exact: true }).click();
+  await page.getByRole("button", { name: "화면 맞춤", exact: true }).click();
+  await page.getByLabel("노드 검색").fill("품질");
+  await page.getByRole("button", { name: "검색", exact: true }).click();
+  await page.getByLabel("유형").selectOption("all");
+  await expect(page.getByTestId("integrated-verification")).toContainText("콘솔 오류 0개");
+
+  await page.screenshot({ path: join(process.cwd(), "output", "final-integrated.png"), fullPage: true });
   expect(errors).toEqual([]);
 });
