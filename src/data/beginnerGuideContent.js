@@ -1,3 +1,8 @@
+/**
+ * [프로젝트 구조 안내] 모든 메뉴가 공유하는 초보자 설명, 용어 사전, 소스 주석 생성 규칙입니다.
+ * categoryContent는 단계별 개념을, glossary는 API 용어를, 아래 함수들은 이를 Markdown과 주석으로 조립합니다.
+ * 실제 JSX에 이미 [초보자용 상세 주석]이 있으면 중복 생성하지 않아 저장 파일과 화면 표시를 일치시킵니다.
+ */
 const categoryContent = {
   "01": { analogy: "Diagram은 도화지에 올릴 내용을 보관하는 상자이고, DiagramView는 그 상자를 화면에 보여주는 액자입니다.", why: "모델과 화면을 분리해서 이해하면 이후 노드와 연결선을 어디에 추가해야 하는지 헷갈리지 않습니다.", action: "Diagram을 한 번 만들고 DiagramView에 전달하는 흐름을 확인합니다.", mistake: "렌더링할 때마다 new Diagram()을 호출하면 기존 노드와 선택 상태가 사라질 수 있습니다." },
   "02": { analogy: "ShapeNode는 다이어그램 위에 붙이는 메모지 한 장과 같습니다. Rect는 메모지를 놓을 위치와 크기입니다.", why: "노드 생성, 위치, 크기, 글자와 스타일은 모든 다이어그램 기능의 출발점입니다.", action: "노드를 만들고 bounds와 표시 속성을 지정한 뒤 Diagram에 등록합니다.", mistake: "Factory로 만든 노드는 이미 Diagram에 들어 있으므로 addItem을 다시 호출하면 중복될 수 있습니다." },
@@ -156,6 +161,22 @@ function insertCommentBeforeFirst(source, token, comment) {
 }
 
 export function annotateSourceForBeginners(lesson, source) {
+  // 실제 예제 파일에 이미 초보자용 주석이 저장되어 있다면 다시 덧붙이지 않습니다.
+  // 이 검사는 같은 파일을 소스 코드 뷰어에서 읽을 때 머리말과 인라인 설명이
+  // 두 번 표시되는 일을 막아, 저장소 파일과 화면에서 복사한 코드가 같도록 합니다.
+  if (source.includes("[초보자용 상세 주석]")) {
+    // 01~14처럼 파일과 메뉴가 일대일이면 저장된 주석을 그대로 반환합니다.
+    if (source.includes(`[초보자용 상세 주석] ${lesson.key}`)) return source;
+
+    // 15~19는 하나의 통합 구현을 여러 메뉴가 재사용합니다. 실제 파일에는 최종 예제
+    // 머리말이 저장되어 있으므로, 화면에서 보여 줄 때에만 첫 제목 줄을 현재 메뉴로
+    // 바꿉니다. 본문 코드는 건드리지 않아 주석과 로직이 중복 삽입되지 않습니다.
+    return source.replace(
+      /\[초보자용 상세 주석\][^\r\n]*/,
+      `[초보자용 상세 주석] ${lesson.key} ${lesson.title}`,
+    );
+  }
+
   const content = getBeginnerLessonContent(lesson);
   const objectGuide = content.objects.length
     ? content.objects.map(({ name, description }) => ` * - ${commentText(name)}: ${commentText(description)}`).join("\n")

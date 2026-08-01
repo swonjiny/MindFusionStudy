@@ -1,3 +1,8 @@
+/**
+ * [프로젝트 구조 안내] Playwright로 실제 브라우저에서 메뉴, 예제 상태, 복사 소스, 콘솔 오류를 검사합니다.
+ * 각 test는 독립적으로 페이지를 열어 앞 테스트의 선택·이벤트 상태가 다음 테스트에 섞이지 않게 합니다.
+ * UI 문구만 확인하는 것이 아니라 실제 소스 파일과 메뉴 메타데이터도 함께 읽어 누락을 찾습니다.
+ */
 import { expect, test } from "@playwright/test";
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
@@ -12,6 +17,46 @@ function collectBrowserErrors(page) {
   page.on("pageerror", (error) => errors.push(`pageerror: ${error.message}`));
   return errors;
 }
+
+test("실제 프로젝트 소스 파일에 초보자용 상세 주석이 저장되어 있다", () => {
+  // 화면에서 동적으로 합성된 문자열이 아니라 디스크에 저장된 JSX 자체를 읽습니다.
+  // 따라서 이 검사는 GitHub에서 파일을 직접 열어도 주석이 보이는지 보장합니다.
+  const examplesRoot = join(process.cwd(), "src", "examples");
+  const exampleFiles = readdirSync(examplesRoot, { recursive: true })
+    .filter((file) => String(file).endsWith(".jsx"));
+
+  expect(exampleFiles).toHaveLength(83);
+  for (const relativePath of exampleFiles) {
+    const source = readFileSync(join(examplesRoot, relativePath), "utf8");
+    expect(source, `${relativePath}에 초보자용 주석이 없습니다.`)
+      .toContain("[초보자용 상세 주석]");
+  }
+
+  const integratedSource = readFileSync(
+    join(process.cwd(), "src", "features", "integrated", "IntegratedDiagramExample.jsx"),
+    "utf8",
+  );
+  expect(integratedSource).toContain("[초보자용 상세 주석]");
+
+  const coreFiles = [
+    "src/main.jsx",
+    "src/App.jsx",
+    "src/components/AppHeader.jsx",
+    "src/components/AppSidebar.jsx",
+    "src/components/LessonTabs.jsx",
+    "src/components/MarkdownViewer.jsx",
+    "src/components/PlannedLesson.jsx",
+    "src/components/SourceCodeViewer.jsx",
+    "src/components/VerificationPanel.jsx",
+    "src/data/beginnerGuideContent.js",
+    "src/data/lessonMenus.js",
+    "src/data/lessonRegistry.js",
+  ];
+  for (const relativePath of coreFiles) {
+    expect(readFileSync(join(process.cwd(), relativePath), "utf8"))
+      .toContain("[프로젝트 구조 안내]");
+  }
+});
 
 test("애플리케이션 공통 화면과 탭이 동작한다", async ({ page }) => {
   const errors = collectBrowserErrors(page);

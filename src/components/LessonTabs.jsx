@@ -1,3 +1,8 @@
+/**
+ * [프로젝트 구조 안내] 개요, 상세 설명, 실행 화면, 소스 코드 등 학습 탭을 조립합니다.
+ * 실제 예제 컴포넌트는 lessonRegistry에서 선택되며, 실행 결과는 onStatus를 통해 App으로 올라갑니다.
+ * 탭마다 데이터를 새로 만들지 않고 동일한 lesson을 전달해야 제목·문서·검증 기준이 일치합니다.
+ */
 import { Alert, Card, Col, Descriptions, Empty, Flex, Row, Space, Tabs, Tag, Typography } from "antd";
 import {
   BookOutlined,

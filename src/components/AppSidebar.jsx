@@ -1,3 +1,8 @@
+/**
+ * [프로젝트 구조 안내] 01~19 학습 목차를 검색하고 선택하는 왼쪽 메뉴입니다.
+ * lessonMenus.js의 원본 데이터를 검색어에 맞게 걸러 Ant Design Menu 형식으로 변환합니다.
+ * 메뉴 선택 시 lesson 객체를 직접 수정하지 않고 부모의 onSelect 콜백에 key만 전달합니다.
+ */
 import { useMemo, useState } from "react";
 import { Input, Menu, Progress, Tag, Typography } from "antd";
 import {

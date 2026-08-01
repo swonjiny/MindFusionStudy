@@ -1,3 +1,9 @@
+/**
+ * [프로젝트 구조 안내] 사용자가 복사할 실제 JSX, 설치 방법, Markdown 문서를 탭으로 표시합니다.
+ * import.meta.glob의 ?raw 옵션은 JSX를 실행하지 않고 파일 내용 그대로 문자열로 읽습니다.
+ * 실제 파일에 초보자 주석이 있으면 그대로 보여 주며, 없는 이전 파일만 주석 생성기가 보완합니다.
+ * 15~19 메뉴는 외부 프로젝트에서도 단독 실행되도록 얇은 wrapper 대신 통합 구현 전체를 표시합니다.
+ */
 import { useMemo, useState } from "react";
 import { Alert, Button, Tabs, Tag, Typography, message } from "antd";
 import { CopyOutlined } from "@ant-design/icons";

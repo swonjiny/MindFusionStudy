@@ -1,14 +1,49 @@
-import { useEffect, useRef, useState } from "react";
+/**
+ * ================================================================
+ * [초보자용 상세 주석] 03-05 텍스트에 맞춰 크기 조정
+ * ================================================================
+ *
+ * 이 파일에서 만드는 것
+ * - resizeToFitText로 노드 크기를 텍스트에 맞춥니다.
+ * - 예상 결과: 노드 2개, 연결선 0개
+ * - 이 JSX 파일은 프로젝트 내부 상대경로에 의존하지 않으므로 다른 React 프로젝트로 복사할 수 있습니다.
+ *
+ * 코드를 읽는 권장 순서
+ * 1. import: React와 MindFusion에서 어떤 도구를 가져오는지 확인합니다.
+ * 2. 상수·데이터: 노드에 넣을 값과 반복할 배열을 확인합니다.
+ * 3. 컴포넌트 상태·ref: 화면이 기억할 값과 MindFusion 인스턴스를 확인합니다.
+ * 4. 초기화 함수: Diagram, 노드와 연결선을 어떤 순서로 만드는지 확인합니다.
+ * 5. 이벤트 함수: 클릭·선택·DOM 생성 뒤 어떤 상태가 바뀌는지 확인합니다.
+ * 6. cleanup: 컴포넌트가 사라질 때 이벤트와 모델을 어떻게 정리하는지 확인합니다.
+ * 7. return JSX: DiagramView에 model, ref와 이벤트 prop이 어떻게 전달되는지 확인합니다.
+ *
+ * 이번 예제의 핵심 용어
+ * - resizeToFitText: 이번 예제에서 resizeToFitText 기능을 설정하거나 실행하기 위해 사용하는 API·속성입니다.
+ * - FitSize: 이번 예제에서 FitSize 기능을 설정하거나 실행하기 위해 사용하는 API·속성입니다.
+ *
+ * 기억할 점
+ * - Diagram은 데이터 모델이고 DiagramView는 그 모델을 화면에 표시하는 React 뷰입니다.
+ * - Rect의 네 값은 순서대로 x, y, width, height입니다.
+ * - onStatus는 학습 사이트의 검증 패널용 선택적 prop입니다. 외부 프로젝트에서는 전달하지 않아도 됩니다.
+ * - StrictMode의 개발 환경 이중 마운트가 문제가 되면 안내된 main.jsx처럼 StrictMode 없이 먼저 확인하세요.
+ * - 글자가 보이지 않으면 노드 크기, 글자색, 여백과 clipText를 함께 확인해야 합니다.
+ */
+import { /* [React 생명주기] effect는 렌더링 뒤 부수 작업을 수행하고, 반환 함수는 unmount 시 리스너와 Diagram 내용을 정리합니다. */
+useEffect, useRef, useState } from "react";
 import { Behavior, Diagram, FitSize, ShapeNode } from "@mindfusion/diagramming";
 import { DiagramView } from "@mindfusion/diagramming-react";
 import { Rect } from "@mindfusion/drawing";
 
+/* [컴포넌트 시작] 이 함수가 외부에서 import해 렌더링하는 예제 컴포넌트입니다. props의 onStatus는 선택 사항입니다. */
 export default function Step0305ResizeToFitText({ onStatus } = {}) {
   const viewRef = useRef(null);
   const [diagram] = useState(() => {
-    const model = new Diagram();
-    const fixed = new ShapeNode(model);
-    fixed.bounds = new Rect(18, 36, 55, 32); fixed.text = "고정 크기"; fixed.brush = "#eef6ff"; fixed.stroke = "#2877de";
+    const model = /* [Diagram 생성] 노드와 연결선을 보관할 모델을 만듭니다. useState의 초기 함수 안에서 만들면 React 재렌더링에도 같은 모델을 유지합니다. */
+new Diagram();
+    const fixed = /* [일반 노드 생성] ShapeNode 객체만 만든 상태이며, bounds·text·스타일을 설정한 뒤 Diagram에 등록해야 화면에 나타납니다. */
+new ShapeNode(model);
+    fixed.bounds = /* [위치와 크기] Rect(x, y, width, height)로 다이어그램 좌표상의 위치와 노드 크기를 함께 지정합니다. */
+new Rect(18, 36, 55, 32); fixed.text = "고정 크기"; fixed.brush = "#eef6ff"; fixed.stroke = "#2877de";
     model.addItem(fixed);
     const fitted = new ShapeNode(model);
     fitted.bounds = new Rect(96, 36, 42, 32); fitted.text = "텍스트 길이에 맞춘 노드"; fitted.brush = "#f4f0ff"; fitted.stroke = "#7950c7";
@@ -17,5 +52,7 @@ export default function Step0305ResizeToFitText({ onStatus } = {}) {
   });
   useEffect(() => { onStatus?.({ diagramReady: true, viewReady: true, rendered: true, nodeCount: 2, linkCount: 0, consoleErrorCount: 0 }); }, [diagram]);
   const fitText = () => diagram.nodes[1].resizeToFitText(FitSize.KeepHeight);
-  return <div style={{ height: 500 }} data-testid="diagram-demo"><DiagramView ref={viewRef} diagram={diagram} behavior={Behavior.Modify} onControlLoaded={fitText} style={{ width: "100%", height: "100%" }} /></div>;
+  return <div style={{ height: 500 }} data-testid="diagram-demo">/* [화면 렌더링] 준비한 Diagram 모델과 ref, 이벤트 함수를 DiagramView prop으로 전달합니다. 부모 요소에는 반드시 높이가 있어야 합니다. */
+<DiagramView ref={viewRef} diagram={diagram} behavior={Behavior.Modify} onControlLoaded={fitText} style={{ width: "100%", height: "100%" }} /></div>;
 }
+

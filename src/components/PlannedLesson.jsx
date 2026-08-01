@@ -1,3 +1,8 @@
+/**
+ * [프로젝트 구조 안내] 아직 구현 범위가 아닌 메뉴를 빈 화면 대신 명확한 안내로 표시합니다.
+ * lesson의 제목과 설명만 읽으며 Diagram이나 예제 상태를 만들지 않습니다.
+ * 구현이 완료된 메뉴는 lessonMenus와 lessonRegistry에 등록되어 이 컴포넌트를 거치지 않습니다.
+ */
 import { Button, Result, Tag, Typography } from "antd";
 import { LockOutlined } from "@ant-design/icons";
 

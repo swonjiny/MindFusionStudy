@@ -1,3 +1,8 @@
+/**
+ * [프로젝트 구조 안내] 실행 예제가 보고한 노드·연결선·이벤트·DOM 상태를 기대값과 비교합니다.
+ * 이 패널은 Diagram을 직접 검사하지 않고 onStatus로 수집된 결과를 읽어 통과 여부만 표현합니다.
+ * 새 검증 항목을 추가할 때는 예제의 보고 값, lessonMenus의 기대값, 이 화면을 함께 맞춰야 합니다.
+ */
 import { Button, Card, Divider, Progress, Space, Tag, Typography } from "antd";
 import {
   CheckCircleFilled,

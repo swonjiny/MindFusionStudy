@@ -1,3 +1,8 @@
+/**
+ * [프로젝트 구조 안내] 문자열 lesson key와 실제 React 예제 컴포넌트를 연결하는 등록표입니다.
+ * App은 URL에서 얻은 key로 이 객체를 조회하므로 파일을 만들기만 하고 여기에 등록하지 않으면 실행되지 않습니다.
+ * import 경로와 객체 아래쪽의 같은 key가 한 쌍인지 확인하는 것이 가장 중요한 유지보수 규칙입니다.
+ */
 import Step0101EmptyDiagram from "../examples/01-diagram-basic/Step0101EmptyDiagram";
 import Step0102DiagramSize from "../examples/01-diagram-basic/Step0102DiagramSize";
 import Step0103DiagramBackground from "../examples/01-diagram-basic/Step0103DiagramBackground";

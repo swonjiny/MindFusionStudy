@@ -1,19 +1,56 @@
-import { useEffect, useRef, useState } from "react";
+/**
+ * ================================================================
+ * [초보자용 상세 주석] 04-03 다중 노드 선택
+ * ================================================================
+ *
+ * 이 파일에서 만드는 것
+ * - allowMultipleSelection과 Selection API로 여러 노드를 선택합니다.
+ * - 예상 결과: 노드 3개, 연결선 0개
+ * - 이 JSX 파일은 프로젝트 내부 상대경로에 의존하지 않으므로 다른 React 프로젝트로 복사할 수 있습니다.
+ *
+ * 코드를 읽는 권장 순서
+ * 1. import: React와 MindFusion에서 어떤 도구를 가져오는지 확인합니다.
+ * 2. 상수·데이터: 노드에 넣을 값과 반복할 배열을 확인합니다.
+ * 3. 컴포넌트 상태·ref: 화면이 기억할 값과 MindFusion 인스턴스를 확인합니다.
+ * 4. 초기화 함수: Diagram, 노드와 연결선을 어떤 순서로 만드는지 확인합니다.
+ * 5. 이벤트 함수: 클릭·선택·DOM 생성 뒤 어떤 상태가 바뀌는지 확인합니다.
+ * 6. cleanup: 컴포넌트가 사라질 때 이벤트와 모델을 어떻게 정리하는지 확인합니다.
+ * 7. return JSX: DiagramView에 model, ref와 이벤트 prop이 어떻게 전달되는지 확인합니다.
+ *
+ * 이번 예제의 핵심 용어
+ * - Selection: 현재 선택된 노드와 연결선의 목록을 관리합니다.
+ * - allowMultipleSelection: 이번 예제에서 allowMultipleSelection 기능을 설정하거나 실행하기 위해 사용하는 API·속성입니다.
+ *
+ * 기억할 점
+ * - Diagram은 데이터 모델이고 DiagramView는 그 모델을 화면에 표시하는 React 뷰입니다.
+ * - Rect의 네 값은 순서대로 x, y, width, height입니다.
+ * - onStatus는 학습 사이트의 검증 패널용 선택적 prop입니다. 외부 프로젝트에서는 전달하지 않아도 됩니다.
+ * - StrictMode의 개발 환경 이중 마운트가 문제가 되면 안내된 main.jsx처럼 StrictMode 없이 먼저 확인하세요.
+ * - 클릭과 선택은 같은 개념이 아닙니다. 클릭 이벤트만 처리하면 선택 목록은 바뀌지 않을 수 있습니다.
+ */
+import { /* [React 생명주기] effect는 렌더링 뒤 부수 작업을 수행하고, 반환 함수는 unmount 시 리스너와 Diagram 내용을 정리합니다. */
+useEffect, useRef, useState } from "react";
 import { Behavior, Diagram, ShapeNode } from "@mindfusion/diagramming";
 import { DiagramView } from "@mindfusion/diagramming-react";
 import { Rect } from "@mindfusion/drawing";
 
+/* [컴포넌트 시작] 이 함수가 외부에서 import해 렌더링하는 예제 컴포넌트입니다. props의 onStatus는 선택 사항입니다. */
 export default function Step0403MultipleSelection({ onStatus } = {}) {
   const [summary, setSummary] = useState({ count: 0, selected: 0, text: "아직 발생하지 않음" });
   const eventCount = useRef(0);
   const [diagram] = useState(() => {
-    const model = new Diagram(); model.allowMultipleSelection = true;
-    ["노드 A", "노드 B", "노드 C"].forEach((text, index) => { const node = new ShapeNode(model); node.bounds = new Rect(15 + index * 58, 36, 48, 34); node.text = text; model.addItem(node); });
+    const model = /* [Diagram 생성] 노드와 연결선을 보관할 모델을 만듭니다. useState의 초기 함수 안에서 만들면 React 재렌더링에도 같은 모델을 유지합니다. */
+new Diagram(); model.allowMultipleSelection = true;
+    ["노드 A", "노드 B", "노드 C"].forEach((text, index) => { const node = /* [일반 노드 생성] ShapeNode 객체만 만든 상태이며, bounds·text·스타일을 설정한 뒤 Diagram에 등록해야 화면에 나타납니다. */
+new ShapeNode(model); node.bounds = /* [위치와 크기] Rect(x, y, width, height)로 다이어그램 좌표상의 위치와 노드 크기를 함께 지정합니다. */
+new Rect(15 + index * 58, 36, 48, 34); node.text = text; model.addItem(node); });
     return model;
   });
   const notify = (next) => onStatus?.({ diagramReady: true, viewReady: true, rendered: true, nodeCount: 3, linkCount: 0, selectedNodeCount: next.selected, eventCount: next.count, lastEvent: next.text, consoleErrorCount: 0 });
   useEffect(() => { notify(summary); }, [diagram]);
   const changed = () => { eventCount.current += 1; const next = { count: eventCount.current, selected: diagram.selection.nodes.length, text: `선택 변경: ${diagram.selection.nodes.length}개` }; setSummary(next); notify(next); };
   const select = async (count) => { diagram.selection.clear(); for (const node of diagram.nodes.slice(0, count)) await diagram.selection.addItem(node); };
-  return <div data-testid="diagram-demo"><p><span data-testid="event-count">이벤트 {summary.count}회</span> · <span data-testid="selected-count">선택 {summary.selected}개</span> · <span data-testid="last-event">{summary.text}</span></p><button onClick={() => select(1)}>첫 노드 선택</button> <button onClick={() => select(2)}>두 노드 선택</button> <button onClick={() => diagram.selection.clear()}>선택 해제</button><div style={{ height: 430 }}><DiagramView diagram={diagram} behavior={Behavior.Modify} onSelectionChanged={changed} style={{ width: "100%", height: "100%" }} /></div></div>;
+  return <div data-testid="diagram-demo"><p><span data-testid="event-count">이벤트 {summary.count}회</span> · <span data-testid="selected-count">선택 {summary.selected}개</span> · <span data-testid="last-event">{summary.text}</span></p><button onClick={() => select(1)}>첫 노드 선택</button> <button onClick={() => select(2)}>두 노드 선택</button> <button onClick={() => diagram.selection.clear()}>선택 해제</button><div style={{ height: 430 }}>/* [화면 렌더링] 준비한 Diagram 모델과 ref, 이벤트 함수를 DiagramView prop으로 전달합니다. 부모 요소에는 반드시 높이가 있어야 합니다. */
+<DiagramView diagram={diagram} behavior={Behavior.Modify} onSelectionChanged={changed} style={{ width: "100%", height: "100%" }} /></div></div>;
 }
+

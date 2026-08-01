@@ -1,3 +1,9 @@
+/**
+ * [프로젝트 구조 안내] 학습 사이트 전체 화면과 현재 메뉴 상태를 조정하는 최상위 컴포넌트입니다.
+ * 주소의 lesson 값을 읽어 현재 예제를 선택하고, 사이드바·탭·검증 패널에 같은 lesson을 전달합니다.
+ * 예제에서 onStatus로 올린 실행 결과도 여기에서 보관하므로 여러 패널이 동일한 검증 값을 봅니다.
+ * 새 예제 자체의 Diagram 코드는 이 파일이 아니라 src/examples 아래에 작성합니다.
+ */
 import { useEffect, useMemo, useState } from "react";
 import { Breadcrumb, Button, ConfigProvider, Flex, Tag, Typography, theme } from "antd";
 import { LeftOutlined, ReloadOutlined, RightOutlined } from "@ant-design/icons";
