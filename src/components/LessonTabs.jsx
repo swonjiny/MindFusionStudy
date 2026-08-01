@@ -12,9 +12,11 @@ import {
 import MarkdownViewer from "./MarkdownViewer";
 import SourceCodeViewer from "./SourceCodeViewer";
 import { lessonRegistry } from "../data/lessonRegistry";
+import { getBeginnerLessonContent } from "../data/beginnerGuideContent";
 
 export default function LessonTabs({ lesson, resetToken, onStatus }) {
   const Example = lessonRegistry[lesson.key];
+  const beginner = getBeginnerLessonContent(lesson);
 
   const overview = (
     <Row gutter={[14, 14]}>
@@ -44,7 +46,7 @@ export default function LessonTabs({ lesson, resetToken, onStatus }) {
         <Alert
           type="info"
           showIcon
-          message="이전 단계에서 추가된 내용"
+          title="이전 단계에서 추가된 내용"
           description={lesson.previousLessonKey ? `${lesson.previousLessonKey}에서 배운 기반 위에 이번 속성 또는 생성 방식을 추가합니다.` : "첫 단계이므로 Diagram과 DiagramView의 최소 관계부터 시작합니다."}
         />
       </Col>
@@ -62,18 +64,49 @@ export default function LessonTabs({ lesson, resetToken, onStatus }) {
       label: "상세 설명",
       icon: <BookOutlined />,
       children: (
-        <Card>
-          <Typography.Title level={4}>Diagram과 DiagramView의 관계</Typography.Title>
-          <Typography.Paragraph>
-            Diagram은 노드와 연결선을 보관하는 모델이고 DiagramView는 모델을 canvas에 그려 사용자 입력을 전달하는 React 뷰입니다.
-            인스턴스를 상태로 유지하면 렌더링마다 모델이 교체되지 않습니다.
-          </Typography.Paragraph>
-          <Typography.Title level={4}>StrictMode와 정리</Typography.Title>
-          <Typography.Paragraph>
-            초기화 전에 clearAll을 호출해 effect가 다시 실행되어도 노드가 중복되지 않게 합니다. React 래퍼는 unmount 시 core view를 dispose하며,
-            예제 cleanup은 모델 내용을 비웁니다.
-          </Typography.Paragraph>
-        </Card>
+        <Space orientation="vertical" size={14} style={{ width: "100%" }}>
+          <Alert
+            showIcon
+            type="info"
+            title={`${lesson.key}를 한 문장으로 이해하기`}
+            description={lesson.description}
+          />
+          <Card title="먼저 큰 그림부터 이해하기">
+            <Typography.Paragraph>{beginner.analogy}</Typography.Paragraph>
+            <Typography.Title level={5}>왜 이 기능을 배우나요?</Typography.Title>
+            <Typography.Paragraph>{beginner.why}</Typography.Paragraph>
+          </Card>
+          <Card title="코드는 이 순서로 실행됩니다">
+            <ol className="beginner-step-list">
+              {beginner.flow.map((step) => <li key={step}><Typography.Text>{step}</Typography.Text></li>)}
+            </ol>
+            <Alert
+              type="success"
+              showIcon
+              title="외우기보다 흐름을 찾으세요"
+              description="모델 준비 → 항목 생성 → 속성·이벤트 적용 → 결과 확인 순서로 읽으면 긴 코드도 쉽게 나눠 볼 수 있습니다."
+            />
+          </Card>
+          <Card title="코드에서 찾을 핵심 용어">
+            <Descriptions
+              bordered
+              size="small"
+              column={1}
+              items={beginner.objects.map(({ name, description }) => ({
+                key: name,
+                label: <Typography.Text code>{name}</Typography.Text>,
+                children: description,
+              }))}
+            />
+          </Card>
+          <Card title="초보자가 자주 막히는 부분">
+            <Alert showIcon type="warning" title={beginner.mistake} />
+            <Typography.Paragraph style={{ marginTop: 12, marginBottom: 0 }}>
+              화면이 비어 있으면 DiagramView 부모 높이와 브라우저 콘솔을 먼저 확인하고,
+              노드가 중복되면 초기화 함수가 두 번 실행되었는지 확인하세요.
+            </Typography.Paragraph>
+          </Card>
+        </Space>
       ),
     },
     { key: "execution", label: "실행 화면", icon: <DesktopOutlined />, children: execution },
@@ -109,14 +142,14 @@ export default function LessonTabs({ lesson, resetToken, onStatus }) {
           <Alert
             showIcon
             type="warning"
-            message="화면이 보이지 않을 때"
+            title="화면이 보이지 않을 때"
             description="DiagramView의 부모 높이, 패키지 CSS 충돌, 브라우저 콘솔 오류를 순서대로 확인하세요."
           />
           <Alert
             className="stacked-alert"
             showIcon
             type="info"
-            message="노드 수가 예상보다 많을 때"
+            title="노드 수가 예상보다 많을 때"
             description="초기화 전에 clearAll을 호출했는지, Factory 반환 노드를 addItem으로 다시 추가하지 않았는지 확인하세요."
           />
         </Card>

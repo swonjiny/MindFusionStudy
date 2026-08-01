@@ -1,6 +1,8 @@
 import { expect, test } from "@playwright/test";
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
+import { readyLessons } from "../data/lessonMenus";
+import { buildBeginnerGuideMarkdown } from "../data/beginnerGuideContent";
 
 function collectBrowserErrors(page) {
   const errors = [];
@@ -81,6 +83,38 @@ test("15~19 소스 뷰어는 상대경로 없는 단일 실행 파일을 제공�
   await expect(page.locator(".source-panel:visible")).toContainText("function useIntegratedDiagram");
   await page.getByRole("tab", { name: "설치·사용 방법" }).click();
   await expect(page.locator(".source-panel:visible")).toContainText('variant="final"');
+  expect(errors).toEqual([]);
+});
+
+test("모든 메뉴의 개발 가이드가 초보자용 필수 설명을 포함한다", () => {
+  expect(readyLessons).toHaveLength(83);
+  for (const lesson of readyLessons) {
+    const original = readFileSync(join(process.cwd(), lesson.guidePath.slice(1)), "utf8");
+    const guide = buildBeginnerGuideMarkdown(lesson, original);
+    expect(guide, lesson.key).toContain(`${lesson.key} ${lesson.title} — 초보자 개발 가이드`);
+    expect(guide, lesson.key).toContain("먼저 큰 그림부터 이해하기");
+    expect(guide, lesson.key).toContain("코드에서 만나는 용어");
+    expect(guide, lesson.key).toContain("코드가 실행되는 순서");
+    expect(guide, lesson.key).toContain("직접 따라 하기");
+    expect(guide, lesson.key).toContain("실행 결과 체크리스트");
+    expect(guide, lesson.key).toContain("초보자가 자주 막히는 부분");
+    expect(guide, lesson.key).not.toContain("undefined");
+  }
+});
+
+test("상세 설명과 개발 가이드가 선택한 메뉴에 맞게 바뀐다", async ({ page }) => {
+  const errors = collectBrowserErrors(page);
+  await page.goto("/");
+  await page.getByText("13. 선택 시 카드 펼치기", { exact: true }).click();
+  await page.getByText("13-05 내부 버튼 펼치기", { exact: true }).click();
+  await page.getByRole("tab", { name: "상세 설명" }).click();
+  await expect(page.getByText("13-05를 한 문장으로 이해하기")).toBeVisible();
+  await expect(page.getByText(/축약 카드는 요약본이고 펼친 카드는 상세본/)).toBeVisible();
+  await expect(page.getByText("코드는 이 순서로 실행됩니다")).toBeVisible();
+  await page.getByRole("tab", { name: "개발 가이드" }).click();
+  await expect(page.getByRole("heading", { name: /13-05 카드 내부 버튼으로 펼치기·닫기 — 초보자 개발 가이드/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "4. 직접 따라 하기" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "6. 초보자가 자주 막히는 부분" })).toBeVisible();
   expect(errors).toEqual([]);
 });
 

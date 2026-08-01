@@ -66,6 +66,18 @@
   margin-top: 12px;
 }
 
+.beginner-step-list {
+  display: grid;
+  gap: 10px;
+  margin: 0 0 16px;
+  padding-left: 24px;
+}
+
+.beginner-step-list li {
+  padding-left: 4px;
+  line-height: 1.65;
+}
+
 .planned-note {
   display: flex;
   align-items: center;

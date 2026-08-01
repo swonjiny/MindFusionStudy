@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Alert, Button, Tabs, Tag, Typography, message } from "antd";
 import { CopyOutlined } from "@ant-design/icons";
 import integratedStandaloneSource from "../features/integrated/IntegratedDiagramExample.jsx?raw";
+import { buildBeginnerGuideMarkdown } from "../data/beginnerGuideContent";
 
 const exampleSources = import.meta.glob("/src/examples/**/*.jsx", {
   query: "?raw",
@@ -130,7 +131,7 @@ createRoot(document.getElementById("root")).render(<${componentName}${variantPro
     return {
       jsx: { path: jsxPath, code: usesIntegratedFeature ? integratedStandaloneSource : (exampleSources[jsxPath] || "") },
       usage: { path: "설치 및 App.jsx 사용 예시", code: usage },
-      guide: { path: lesson.guidePath, code: guideSources[lesson.guidePath] || "" },
+      guide: { path: lesson.guidePath, code: buildBeginnerGuideMarkdown(lesson, guideSources[lesson.guidePath] || "") },
     };
   }, [lesson]);
 
