@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Alert, Button, Tabs, Tag, Typography, message } from "antd";
 import { CopyOutlined } from "@ant-design/icons";
+import integratedStandaloneSource from "../features/integrated/IntegratedDiagramExample.jsx?raw";
 
 const exampleSources = import.meta.glob("/src/examples/**/*.jsx", {
   query: "?raw",
@@ -12,11 +13,13 @@ const guideSources = import.meta.glob("/src/guides/**/*.md", {
   import: "default",
   eager: true,
 });
-const integratedSources = import.meta.glob("/src/features/integrated/*.{js,jsx,css}", {
-  query: "?raw",
-  import: "default",
-  eager: true,
-});
+const integratedVariantByLesson = {
+  "15-01": "root", "15-02": "tree", "15-03": "recursive",
+  "16-01": "center", "16-02": "viewport", "16-03": "details",
+  "17-01": "json", "17-02": "loading", "17-03": "error", "17-04": "empty",
+  "18-01": "search", "18-02": "filter", "18-03": "verification",
+  "19-01": "final",
+};
 
 const sourceFileByLesson = {
   "01-01": "/src/examples/01-diagram-basic/Step0101EmptyDiagram.jsx",
@@ -108,10 +111,13 @@ export default function SourceCodeViewer({ lesson }) {
   const [activeKey, setActiveKey] = useState("jsx");
 
   const files = useMemo(() => {
-    const jsxPath = sourceFileByLesson[lesson.key];
-    const componentName = jsxPath.split("/").at(-1).replace(".jsx", "");
     const usesIntegratedFeature = Number(lesson.category) >= 15;
+    const jsxPath = usesIntegratedFeature
+      ? "/src/features/integrated/IntegratedDiagramExample.jsx"
+      : sourceFileByLesson[lesson.key];
+    const componentName = jsxPath.split("/").at(-1).replace(".jsx", "");
     const graphPackage = lesson.category === "07" ? " @mindfusion/graphs" : "";
+    const variantProp = usesIntegratedFeature ? ` variant="${integratedVariantByLesson[lesson.key]}"` : "";
     const usage = `npm install react react-dom @mindfusion/diagramming @mindfusion/diagramming-react @mindfusion/drawing${graphPackage}
 
 // main.jsx
@@ -119,17 +125,12 @@ import { createRoot } from "react-dom/client";
 import ${componentName} from "./${componentName}";
 
 // MindFusion React 4.9.0 래퍼는 개발 환경의 StrictMode 이중 마운트를 지원하지 않습니다.
-createRoot(document.getElementById("root")).render(<${componentName} />);
+createRoot(document.getElementById("root")).render(<${componentName}${variantProp} />);
 `;
-    const shared = Object.entries(integratedSources)
-      .sort(([left], [right]) => left.localeCompare(right))
-      .map(([path, code]) => `// ${path}\n${code}`)
-      .join("\n\n");
     return {
-      jsx: { path: jsxPath, code: exampleSources[jsxPath] || "" },
+      jsx: { path: jsxPath, code: usesIntegratedFeature ? integratedStandaloneSource : (exampleSources[jsxPath] || "") },
       usage: { path: "설치 및 App.jsx 사용 예시", code: usage },
       guide: { path: lesson.guidePath, code: guideSources[lesson.guidePath] || "" },
-      ...(usesIntegratedFeature ? { shared: { path: "/src/features/integrated/*", code: shared } } : {}),
     };
   }, [lesson]);
 
@@ -139,10 +140,9 @@ createRoot(document.getElementById("root")).render(<${componentName} />);
   };
 
   const items = [
-    ["jsx", files.shared ? "단계 JSX" : "독립 실행 JSX"],
+    ["jsx", "독립 실행 JSX"],
     ["usage", "설치·사용 방법"],
     ["guide", "Markdown"],
-    ...(files.shared ? [["shared", "공통 훅·유틸"]] : []),
   ].map(([key, label]) => ({
     key,
     label,
@@ -162,8 +162,8 @@ createRoot(document.getElementById("root")).render(<${componentName} />);
       <Alert
         type="success"
         showIcon
-        title={files.shared ? "단계 컴포넌트가 검증된 공통 구현을 재사용합니다" : "이 파일 하나만 복사하면 됩니다"}
-        description={files.shared ? "15~19는 최종 예제를 따로 다시 작성하지 않고 같은 훅·데이터·템플릿·스타일을 조합합니다. 공통 훅·유틸 탭에서 함께 필요한 파일을 확인할 수 있습니다." : "예제 JSX는 프로젝트 내부 공통 모듈이나 CSS를 참조하지 않습니다. 필요한 MindFusion 패키지를 설치하고 App.jsx에서 렌더링하면 바로 실행됩니다."}
+        title="이 파일 하나만 복사하면 됩니다"
+        description="표시된 JSX는 프로젝트 내부 공통 모듈이나 CSS를 참조하지 않습니다. 필요한 MindFusion 패키지를 설치하고 설치·사용 방법의 variant를 그대로 적용하면 바로 실행됩니다."
       />
       <div className="section-toolbar">
         <Typography.Title level={4}>복사 가능한 독립 예제</Typography.Title>

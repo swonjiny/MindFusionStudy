@@ -57,6 +57,31 @@ test("01~14 예제는 독립 실행되고 15~19는 공통 통합 모듈을 재�
     expect(source, file).toContain("features/integrated/IntegratedDiagramExample");
     expect(source, file).toContain("export default function");
   }
+
+  const standaloneIntegrated = readFileSync(
+    join(process.cwd(), "src", "features", "integrated", "IntegratedDiagramExample.jsx"),
+    "utf8",
+  );
+  expect(standaloneIntegrated).not.toMatch(/from\s+["']\.{1,2}\//);
+  expect(standaloneIntegrated).not.toMatch(/import\s+["']\.{1,2}\//);
+  expect(standaloneIntegrated).toContain("function useIntegratedDiagram");
+  expect(standaloneIntegrated).toContain("const integratedMockData");
+  expect(standaloneIntegrated).toContain("const integratedCss");
+});
+
+test("15~19 소스 뷰어는 상대경로 없는 단일 실행 파일을 제공한다", async ({ page }) => {
+  const errors = collectBrowserErrors(page);
+  await page.goto("/");
+  await page.getByText("19. 완성 예제", { exact: true }).click();
+  await page.getByText("19-01 최종 종합 예제", { exact: true }).click();
+  await page.getByRole("tab", { name: "소스 코드" }).click();
+  await expect(page.getByText("이 파일 하나만 복사하면 됩니다")).toBeVisible();
+  await expect(page.getByRole("tab", { name: "독립 실행 JSX" })).toBeVisible();
+  await expect(page.getByRole("tab", { name: "공통 훅·유틸" })).toHaveCount(0);
+  await expect(page.locator(".source-panel:visible")).toContainText("function useIntegratedDiagram");
+  await page.getByRole("tab", { name: "설치·사용 방법" }).click();
+  await expect(page.locator(".source-panel:visible")).toContainText('variant="final"');
+  expect(errors).toEqual([]);
 });
 
 test("구현된 모든 메뉴의 노드와 연결선 수가 검증된다", async ({ page }) => {

@@ -27,11 +27,9 @@
 
 ## 최종 통합 구조
 
-- `useIntegratedDiagram`: Diagram 생성, 선택, 트리 가시성, 뷰포트, 검색·필터를 한곳에서 관리한다.
-- `integratedData`: JSON과 비동기 Mock API 데이터 소스를 제공한다.
-- `integratedTemplates`: ControlNode HTML과 카드 크기 계산을 재사용한다.
-- `IntegratedDiagramExample`: 15~19 메뉴가 같은 구현을 옵션별로 조합한다.
-- 각 단계 JSX는 외부에서 가져다 쓸 수 있는 독립 진입 컴포넌트이며, 통합 단계는 표시된 공통 모듈과 함께 복사한다.
+- `IntegratedDiagramExample.jsx` 한 파일 안에서 공통 훅, 데이터, ControlNode 템플릿과 스타일을 관리한다.
+- 15~19 메뉴는 같은 독립 실행 컴포넌트에 단계별 `variant`만 전달해 기능을 조합한다.
+- 소스 뷰어에 표시되는 01~19 JSX는 프로젝트 내부 상대경로 의존성이 없으며, 파일 하나를 복사해 실행할 수 있다.
 
 ## 검증 범위
 
