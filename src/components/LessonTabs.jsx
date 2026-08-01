@@ -90,7 +90,8 @@ export default function LessonTabs({ lesson, resetToken, onStatus }) {
             <Typography.Text>• Diagram과 DiagramView가 생성되어야 합니다.</Typography.Text>
             <Typography.Text>• 노드 수가 정확히 {lesson.expectedNodes}개여야 합니다.</Typography.Text>
             <Typography.Text>• 연결선 수가 정확히 {lesson.expectedLinks}개여야 합니다.</Typography.Text>
-            {lesson.eventKind && <Typography.Text>• 선택 또는 이벤트 결과가 검증 패널에 반영되어야 합니다.</Typography.Text>}
+              {lesson.eventKind && <Typography.Text>• 선택 또는 이벤트 결과가 검증 패널에 반영되어야 합니다.</Typography.Text>}
+              {lesson.tracksTreeState && <Typography.Text>• visible 노드·연결선 수와 expanded 부모 수가 단계 기준과 일치해야 합니다.</Typography.Text>}
             <Typography.Text>• 콘솔 오류 수가 0이어야 합니다.</Typography.Text>
           </Space>
         </Card>
@@ -128,7 +129,7 @@ export default function LessonTabs({ lesson, resetToken, onStatus }) {
           <Typography.Paragraph>
             {lesson.nextLessonKey
               ? `${lesson.nextLessonKey} 예제에서 현재 개념에 다음 속성 또는 생성 방식을 추가합니다.`
-              : "이번 2차 구현 범위의 마지막 예제입니다. 06 이후 단계는 아직 구현하지 않습니다."}
+              : "이번 3차 구현 범위의 마지막 예제입니다. 09 이후 단계는 아직 구현하지 않습니다."}
           </Typography.Paragraph>
         </Card>
       ),

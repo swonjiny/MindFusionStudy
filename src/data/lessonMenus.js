@@ -29,6 +29,22 @@ const readySpecs = [
   ["05-03", "연결선 텍스트 표시", "연결선 텍스트", "연결선의 text 속성에 관계 설명을 표시합니다.", 2, 1, ["DiagramLink", "text"]],
   ["05-04", "화살표 머리 설정", "화살표 머리", "ArrowHeads.Triangle로 연결 방향을 표시합니다.", 2, 1, ["ArrowHeads", "headShape"]],
   ["05-05", "연결선 모양과 스타일 비교", "연결선 스타일", "Bezier와 Cascading 연결선, 색상과 점선을 비교합니다.", 3, 2, ["LinkShape", "DashStyle"]],
+  ["06-01", "부모 1개와 자식 1개", "부모와 자식 1개", "부모 1개와 자식 1개를 연결해 가장 작은 트리를 만듭니다.", 2, 1, ["outgoingLinks", "expanded"], null, false, 2, 1, 1],
+  ["06-02", "부모 1개와 자식 2개", "자식 2개", "하나의 부모에서 두 자식으로 분기하는 구조를 만듭니다.", 3, 2, ["ShapeNode", "createDiagramLink"], null, false, 3, 2, 1],
+  ["06-03", "부모 1개와 자식 5개", "자식 5개", "반복문으로 부모에 다섯 자식을 연결합니다.", 6, 5, ["ShapeNode", "outgoingLinks"], null, false, 6, 5, 1],
+  ["06-04", "손자 노드가 있는 트리", "손자 노드", "자식이 다시 부모가 되는 손자 구조를 만듭니다.", 5, 4, ["destination", "outgoingLinks"], null, false, 5, 4, 2],
+  ["06-05", "3단계 트리 구성", "3단계 트리", "루트·중간 노드·리프의 3단계 트리를 완성합니다.", 7, 6, ["expandable", "expanded"], null, false, 7, 6, 3],
+  ["07-01", "세로 트리 자동 배치", "세로 자동 배치", "TreeLayout으로 위에서 아래 방향의 트리를 자동 배치합니다.", 4, 3, ["TreeLayout", "TopToBottom"], null, false, 4, 3, 1],
+  ["07-02", "트리 간격 조정", "배치 간격", "레벨 간격과 같은 레벨의 노드 간격을 조정합니다.", 6, 5, ["levelDistance", "nodeDistance"], null, false, 6, 5, 1],
+  ["07-03", "가로 트리 자동 배치", "가로 자동 배치", "TreeLayout 방향을 왼쪽에서 오른쪽으로 설정합니다.", 4, 3, ["TreeLayout", "LeftToRight"], null, false, 4, 3, 1],
+  ["07-04", "3단계 트리 자동 배치", "3단계 자동 배치", "여러 분기의 3단계 트리를 자동으로 정렬합니다.", 7, 6, ["TreeLayout", "Diagram.arrange"], null, false, 7, 6, 3],
+  ["07-05", "자식 추가 후 재배치", "동적 재배치", "새 자식을 추가한 뒤 전체 트리를 다시 배치합니다.", 6, 5, ["addItem", "Diagram.arrange"], null, false, 6, 5, 1],
+  ["08-01", "자식과 연결선 함께 접기", "자식·연결선 접기", "부모를 접을 때 직접 자식과 연결선을 함께 숨깁니다.", 3, 2, ["visible", "expanded"], null, false, 1, 0, 0],
+  ["08-02", "모든 하위 노드 재귀 접기", "재귀 접기", "손자 이하 모든 하위 노드와 연결선을 재귀적으로 숨깁니다.", 5, 4, ["outgoingLinks", "destination"], null, false, 1, 0, 0],
+  ["08-03", "기존 펼침 상태 복원", "상태 복원", "접기 전 visible·expanded 상태를 저장했다가 복원합니다.", 4, 3, ["visible", "expanded"], null, false, 4, 3, 2],
+  ["08-04", "전체 트리 접기", "전체 접기", "모든 가지를 접어 최상위 루트만 표시합니다.", 7, 6, ["Diagram.nodes", "visible"], null, false, 1, 0, 0],
+  ["08-05", "전체 트리 펼치기", "전체 펼치기", "접힌 모든 가지를 펼쳐 전체 구조를 표시합니다.", 6, 5, ["Diagram.links", "expanded"], null, false, 6, 5, 3],
+  ["08-06", "특정 깊이까지만 펼치기", "깊이 제한 펼치기", "재귀 순회로 2단계까지만 노드와 연결선을 표시합니다.", 7, 6, ["outgoingLinks", "visible"], null, false, 3, 2, 1],
 ];
 
 const guideFolders = {
@@ -37,6 +53,9 @@ const guideFolders = {
   "03": "03-node-content",
   "04": "04-selection-events",
   "05": "05-links",
+  "06": "06-parent-child-tree",
+  "07": "07-tree-layout",
+  "08": "08-collapse-expand",
 };
 
 export const categories = [
@@ -50,12 +69,16 @@ export const categories = [
 ].map(([key, title]) => ({ key, title }));
 
 const readyLessons = readySpecs.map((spec, index) => {
-  const [key, title, shortTitle, description, expectedNodes, expectedLinks, objects, eventKind, requiresSelection] = spec;
+  const [key, title, shortTitle, description, expectedNodes, expectedLinks, objects, eventKind, requiresSelection, expectedVisibleNodes, expectedVisibleLinks, expectedExpandedNodes] = spec;
   const category = key.slice(0, 2);
   return {
     key, category, title, shortTitle, description, expectedNodes, expectedLinks, objects,
     eventKind: eventKind || null,
     requiresSelection: Boolean(requiresSelection),
+    tracksTreeState: Number(category) >= 6 && Number(category) <= 8,
+    expectedVisibleNodes: expectedVisibleNodes ?? expectedNodes,
+    expectedVisibleLinks: expectedVisibleLinks ?? expectedLinks,
+    expectedExpandedNodes: expectedExpandedNodes ?? null,
     goals: [
       description,
       `실행 후 노드 ${expectedNodes}개와 연결선 ${expectedLinks}개를 검증합니다.`,
@@ -70,7 +93,7 @@ const readyLessons = readySpecs.map((spec, index) => {
 });
 
 const plannedLessons = categories
-  .filter(({ key }) => Number(key) === 0 || Number(key) >= 6)
+  .filter(({ key }) => Number(key) === 0 || Number(key) >= 9)
   .map(({ key, title }) => ({
     key: `${key}-01`,
     category: key,

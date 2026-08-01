@@ -211,3 +211,39 @@ core API를 직접 사용할 경우 Diagram 이벤트는 `EventDispatcher`이며
 ## 범위 제한
 
 이번 확인과 구현은 03~05까지만 적용했다. 06 이후 트리, HTML 노드, 카드 관련 API는 구현하지 않았다.
+
+# 3차 개발 API 재확인 (2026-08-01)
+
+설치된 선언 파일과 런타임 패키지를 다시 확인했다.
+
+- `@mindfusion/diagramming` 4.9.1
+- `@mindfusion/diagramming-react` 4.9.0
+- `@mindfusion/drawing` 4.4.0
+- `@mindfusion/graphs` 4.2.0
+
+## 부모·자식과 가시성
+
+- `ShapeNode.outgoingLinks`는 부모에서 나가는 연결선 목록을 제공한다.
+- `DiagramLink.destination`으로 자식 노드를 찾을 수 있다.
+- 모든 `DiagramItem`은 `visible` 속성을 제공한다.
+- `ShapeNode.expandable`과 `ShapeNode.expanded`로 접기 가능한 부모와 현재 펼침 상태를 표현한다.
+- `Diagram.invalidate()`로 visible 변경 후 화면을 다시 그릴 수 있다.
+
+## 트리 레이아웃
+
+- 자동 배치는 `@mindfusion/graphs` 4.2.0의 `TreeLayout`을 사용한다.
+- 방향은 `LayoutDirection.TopToBottom`, `LeftToRight`, `BottomToTop`, `RightToLeft`를 제공한다.
+- 같은 레벨 간격은 `nodeDistance`, 레벨 사이는 `levelDistance`로 설정한다.
+- 구성한 레이아웃은 `Diagram.arrange(layout)`에 전달한다.
+- 독립 예제로 복사할 수 있도록 `@mindfusion/graphs`를 직접 의존성으로 등록했다.
+
+## 재귀 접기·펼치기
+
+- 재귀 함수는 각 노드의 `outgoingLinks`를 따라 `destination`으로 이동한다.
+- 접을 때 하위 노드와 해당 연결선의 `visible`을 함께 false로 설정한다.
+- 정확한 복원 예제는 접기 전 노드의 `visible`·`expanded`와 링크의 `visible`을 저장한 후 원본 객체에 되돌린다.
+- 깊이 제한 펼치기는 루트를 깊이 1로 두고 제한 이하의 노드·연결선만 visible로 설정한다.
+
+## 범위 제한
+
+이번 구현은 06~08에만 적용했다. 09 HTML 요소 노드 이후는 준비 중 메뉴로 유지했다.

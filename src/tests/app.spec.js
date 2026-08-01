@@ -37,9 +37,9 @@ test("애플리케이션 공통 화면과 탭이 동작한다", async ({ page })
 test("모든 예제 JSX가 프로젝트 내부 모듈 없이 독립 실행 가능하다", () => {
   const examplesRoot = join(process.cwd(), "src", "examples");
   const files = readdirSync(examplesRoot, { recursive: true })
-    .filter((file) => typeof file === "string" && /^0[1-5]-/.test(file) && file.endsWith(".jsx"));
+    .filter((file) => typeof file === "string" && /^0[1-8]-/.test(file) && file.endsWith(".jsx"));
 
-  expect(files).toHaveLength(30);
+  expect(files).toHaveLength(46);
   for (const file of files) {
     const source = readFileSync(join(examplesRoot, file), "utf8");
     expect(source, file).not.toContain('from "../');
@@ -116,11 +116,52 @@ test("이전·다음 이동과 준비 중 화면이 동작한다", async ({ page
   await page.getByRole("button", { name: "이전 예제", exact: true }).click();
   await expect(page.locator(".lesson-number")).toHaveText("02-01");
 
-  await page.getByText("06. 부모·자식 트리 구조", { exact: true }).click();
-  await page.getByText("06-01 준비 중", { exact: true }).click();
+  await page.getByText("09. HTML 요소 노드 기초", { exact: true }).click();
+  await page.getByText("09-01 준비 중", { exact: true }).click();
   await expect(page.getByTestId("planned-lesson")).toBeVisible();
-  await expect(page.getByText(/2차 구현 범위에는 포함되지 않습니다/)).toBeVisible();
+  await expect(page.getByText(/3차 구현 범위에는 포함되지 않습니다/)).toBeVisible();
 
+  expect(errors).toEqual([]);
+});
+
+test("06~08 트리 예제의 노드·연결선·visible·expanded 상태가 검증된다", async ({ page }) => {
+  test.setTimeout(60_000);
+  const errors = collectBrowserErrors(page);
+  const lessons = [
+    ["06-01", "부모와 자식 1개", 2, 1, 2, 1, 1],
+    ["06-02", "자식 2개", 3, 2, 3, 2, 1],
+    ["06-03", "자식 5개", 6, 5, 6, 5, 1],
+    ["06-04", "손자 노드", 5, 4, 5, 4, 2],
+    ["06-05", "3단계 트리", 7, 6, 7, 6, 3],
+    ["07-01", "세로 자동 배치", 4, 3, 4, 3, 1],
+    ["07-02", "배치 간격", 6, 5, 6, 5, 1],
+    ["07-03", "가로 자동 배치", 4, 3, 4, 3, 1],
+    ["07-04", "3단계 자동 배치", 7, 6, 7, 6, 3],
+    ["07-05", "동적 재배치", 6, 5, 6, 5, 1, ["자식 추가 후 재배치"]],
+    ["08-01", "자식·연결선 접기", 3, 2, 1, 0, 0, ["자식과 연결선 접기"]],
+    ["08-02", "재귀 접기", 5, 4, 1, 0, 0, ["손자까지 재귀 접기"]],
+    ["08-03", "상태 복원", 4, 3, 4, 3, 2, ["임시 접기", "기존 상태 복원"]],
+    ["08-04", "전체 접기", 7, 6, 1, 0, 0, ["전체 접기"]],
+    ["08-05", "전체 펼치기", 6, 5, 6, 5, 3, ["전체 펼치기"]],
+    ["08-06", "깊이 제한 펼치기", 7, 6, 3, 2, 1, ["2단계까지만 펼치기"]],
+  ];
+
+  await page.goto("/");
+  for (const [key, shortTitle, nodes, links, visibleNodes, visibleLinks, expanded, actions = []] of lessons) {
+    const child = page.getByText(`${key} ${shortTitle}`, { exact: true });
+    if (!(await child.isVisible())) await page.getByText(new RegExp(`^${key.slice(0, 2)}\\. `)).click();
+    await child.click();
+    await page.getByRole("tab", { name: "실행 화면" }).click();
+    for (const action of actions) await page.getByRole("button", { name: action, exact: true }).click();
+    await expect(page.getByTestId("verification-2")).toContainText(`현재 ${nodes}개`);
+    await expect(page.getByTestId("verification-3")).toContainText(`현재 ${links}개`);
+    await expect(page.getByTestId("verification-visible-nodes")).toContainText(`현재 ${visibleNodes}개`);
+    await expect(page.getByTestId("verification-visible-links")).toContainText(`현재 ${visibleLinks}개`);
+    await expect(page.getByTestId("verification-expanded")).toContainText(`expanded 부모 ${expanded}개`);
+    await expect(page.getByTestId("verification-visible-nodes")).toContainText("success");
+    await expect(page.getByTestId("verification-visible-links")).toContainText("success");
+    await expect(page.getByTestId("verification-expanded")).toContainText("success");
+  }
   expect(errors).toEqual([]);
 });
 

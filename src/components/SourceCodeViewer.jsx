@@ -44,6 +44,22 @@ const sourceFileByLesson = {
   "05-03": "/src/examples/05-links/Step0503LinkText.jsx",
   "05-04": "/src/examples/05-links/Step0504ArrowHead.jsx",
   "05-05": "/src/examples/05-links/Step0505LinkStyles.jsx",
+  "06-01": "/src/examples/06-parent-child-tree/Step0601ParentOneChild.jsx",
+  "06-02": "/src/examples/06-parent-child-tree/Step0602ParentTwoChildren.jsx",
+  "06-03": "/src/examples/06-parent-child-tree/Step0603ParentFiveChildren.jsx",
+  "06-04": "/src/examples/06-parent-child-tree/Step0604Grandchildren.jsx",
+  "06-05": "/src/examples/06-parent-child-tree/Step0605ThreeLevelTree.jsx",
+  "07-01": "/src/examples/07-tree-layout/Step0701VerticalTreeLayout.jsx",
+  "07-02": "/src/examples/07-tree-layout/Step0702LayoutSpacing.jsx",
+  "07-03": "/src/examples/07-tree-layout/Step0703HorizontalTreeLayout.jsx",
+  "07-04": "/src/examples/07-tree-layout/Step0704ThreeLevelAutoLayout.jsx",
+  "07-05": "/src/examples/07-tree-layout/Step0705RelayoutAfterAdd.jsx",
+  "08-01": "/src/examples/08-collapse-expand/Step0801CollapseChildren.jsx",
+  "08-02": "/src/examples/08-collapse-expand/Step0802RecursiveCollapse.jsx",
+  "08-03": "/src/examples/08-collapse-expand/Step0803RestoreState.jsx",
+  "08-04": "/src/examples/08-collapse-expand/Step0804CollapseAll.jsx",
+  "08-05": "/src/examples/08-collapse-expand/Step0805ExpandAll.jsx",
+  "08-06": "/src/examples/08-collapse-expand/Step0806ExpandToDepth.jsx",
 };
 
 export default function SourceCodeViewer({ lesson }) {
@@ -52,7 +68,8 @@ export default function SourceCodeViewer({ lesson }) {
   const files = useMemo(() => {
     const jsxPath = sourceFileByLesson[lesson.key];
     const componentName = jsxPath.split("/").at(-1).replace(".jsx", "");
-    const usage = `npm install react react-dom @mindfusion/diagramming @mindfusion/diagramming-react @mindfusion/drawing
+    const graphPackage = lesson.category === "07" ? " @mindfusion/graphs" : "";
+    const usage = `npm install react react-dom @mindfusion/diagramming @mindfusion/diagramming-react @mindfusion/drawing${graphPackage}
 
 // main.jsx
 import { createRoot } from "react-dom/client";

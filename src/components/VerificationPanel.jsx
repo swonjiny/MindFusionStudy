@@ -58,6 +58,28 @@ export default function VerificationPanel({ lesson, status, onReset }) {
       "verification-event",
     ]);
   }
+  if (lesson.tracksTreeState) {
+    checks.push(
+      [
+        "visible 노드",
+        `${lesson.expectedVisibleNodes}개가 필요하며 현재 ${status.visibleNodeCount ?? 0}개입니다.`,
+        status.visibleNodeCount === lesson.expectedVisibleNodes,
+        "verification-visible-nodes",
+      ],
+      [
+        "visible 연결선",
+        `${lesson.expectedVisibleLinks}개가 필요하며 현재 ${status.visibleLinkCount ?? 0}개입니다.`,
+        status.visibleLinkCount === lesson.expectedVisibleLinks,
+        "verification-visible-links",
+      ],
+      [
+        "펼침 상태",
+        `expanded 부모 ${status.expandedNodeCount ?? 0}개`,
+        status.expandedNodeCount === lesson.expectedExpandedNodes,
+        "verification-expanded",
+      ],
+    );
+  }
   const passedCount = checks.filter((item) => item[2]).length;
 
   return (
@@ -93,6 +115,7 @@ export default function VerificationPanel({ lesson, status, onReset }) {
           {lesson.expectedNodes > 0 && <Typography.Text>• 노드를 마우스로 드래그할 수 있는지 확인</Typography.Text>}
           {lesson.expectedLinks > 0 && <Typography.Text>• 연결선 방향과 스타일이 설명과 일치하는지 확인</Typography.Text>}
           {lesson.eventKind && <Typography.Text>• 선택·클릭 이벤트 로그가 즉시 갱신되는지 확인</Typography.Text>}
+          {lesson.tracksTreeState && <Typography.Text>• 접기·펼치기 후 노드와 연결선이 함께 표시·숨김되는지 확인</Typography.Text>}
           <Typography.Text>• 텍스트와 색상이 설명과 일치하는지 확인</Typography.Text>
         </Space>
       </Card>

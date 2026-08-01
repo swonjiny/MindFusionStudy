@@ -15,6 +15,7 @@
     "@mindfusion/diagramming": "4.9.1",
     "@mindfusion/diagramming-react": "4.9.0",
     "@mindfusion/drawing": "4.4.0",
+    "@mindfusion/graphs": "4.2.0",
     "antd": "6.5.2",
     "react": "19.2.8",
     "react-dom": "19.2.8",

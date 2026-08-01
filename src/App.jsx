@@ -22,6 +22,9 @@ const emptyStatus = {
   selectedNodeCount: 0,
   eventCount: 0,
   lastEvent: "아직 발생하지 않음",
+  visibleNodeCount: 0,
+  visibleLinkCount: 0,
+  expandedNodeCount: 0,
   consoleErrorCount: 0,
 };
 

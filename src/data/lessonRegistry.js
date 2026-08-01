@@ -28,6 +28,22 @@ import Step0502TwoLinks from "../examples/05-links/Step0502TwoLinks";
 import Step0503LinkText from "../examples/05-links/Step0503LinkText";
 import Step0504ArrowHead from "../examples/05-links/Step0504ArrowHead";
 import Step0505LinkStyles from "../examples/05-links/Step0505LinkStyles";
+import Step0601ParentOneChild from "../examples/06-parent-child-tree/Step0601ParentOneChild";
+import Step0602ParentTwoChildren from "../examples/06-parent-child-tree/Step0602ParentTwoChildren";
+import Step0603ParentFiveChildren from "../examples/06-parent-child-tree/Step0603ParentFiveChildren";
+import Step0604Grandchildren from "../examples/06-parent-child-tree/Step0604Grandchildren";
+import Step0605ThreeLevelTree from "../examples/06-parent-child-tree/Step0605ThreeLevelTree";
+import Step0701VerticalTreeLayout from "../examples/07-tree-layout/Step0701VerticalTreeLayout";
+import Step0702LayoutSpacing from "../examples/07-tree-layout/Step0702LayoutSpacing";
+import Step0703HorizontalTreeLayout from "../examples/07-tree-layout/Step0703HorizontalTreeLayout";
+import Step0704ThreeLevelAutoLayout from "../examples/07-tree-layout/Step0704ThreeLevelAutoLayout";
+import Step0705RelayoutAfterAdd from "../examples/07-tree-layout/Step0705RelayoutAfterAdd";
+import Step0801CollapseChildren from "../examples/08-collapse-expand/Step0801CollapseChildren";
+import Step0802RecursiveCollapse from "../examples/08-collapse-expand/Step0802RecursiveCollapse";
+import Step0803RestoreState from "../examples/08-collapse-expand/Step0803RestoreState";
+import Step0804CollapseAll from "../examples/08-collapse-expand/Step0804CollapseAll";
+import Step0805ExpandAll from "../examples/08-collapse-expand/Step0805ExpandAll";
+import Step0806ExpandToDepth from "../examples/08-collapse-expand/Step0806ExpandToDepth";
 
 export const lessonRegistry = {
   "01-01": Step0101EmptyDiagram,
@@ -60,4 +76,20 @@ export const lessonRegistry = {
   "05-03": Step0503LinkText,
   "05-04": Step0504ArrowHead,
   "05-05": Step0505LinkStyles,
+  "06-01": Step0601ParentOneChild,
+  "06-02": Step0602ParentTwoChildren,
+  "06-03": Step0603ParentFiveChildren,
+  "06-04": Step0604Grandchildren,
+  "06-05": Step0605ThreeLevelTree,
+  "07-01": Step0701VerticalTreeLayout,
+  "07-02": Step0702LayoutSpacing,
+  "07-03": Step0703HorizontalTreeLayout,
+  "07-04": Step0704ThreeLevelAutoLayout,
+  "07-05": Step0705RelayoutAfterAdd,
+  "08-01": Step0801CollapseChildren,
+  "08-02": Step0802RecursiveCollapse,
+  "08-03": Step0803RestoreState,
+  "08-04": Step0804CollapseAll,
+  "08-05": Step0805ExpandAll,
+  "08-06": Step0806ExpandToDepth,
 };
