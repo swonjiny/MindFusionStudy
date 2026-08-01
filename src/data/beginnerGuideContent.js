@@ -146,3 +146,73 @@ ${lesson.nextLessonKey ? `- 다음 단계: **${lesson.nextLessonKey}**에서 현
 ${technicalBody || "이 예제의 기술 설명은 위 단계별 안내와 소스 코드 주석을 함께 참고하세요."}
 `;
 }
+
+const commentText = (value) => String(value).replaceAll("*/", "* /").replaceAll("\n", " ");
+
+function insertCommentBeforeFirst(source, token, comment) {
+  const index = source.indexOf(token);
+  if (index < 0) return source;
+  return `${source.slice(0, index)}/* ${commentText(comment)} */\n${source.slice(index)}`;
+}
+
+export function annotateSourceForBeginners(lesson, source) {
+  const content = getBeginnerLessonContent(lesson);
+  const objectGuide = content.objects.length
+    ? content.objects.map(({ name, description }) => ` * - ${commentText(name)}: ${commentText(description)}`).join("\n")
+    : " * - 별도 객체 없음: 화면 구조와 렌더링 흐름에 집중합니다.";
+  const header = `/**
+ * ================================================================
+ * [초보자용 상세 주석] ${lesson.key} ${commentText(lesson.title)}
+ * ================================================================
+ *
+ * 이 파일에서 만드는 것
+ * - ${commentText(lesson.description)}
+ * - 예상 결과: 노드 ${lesson.expectedNodes}개, 연결선 ${lesson.expectedLinks}개
+ * - 이 JSX 파일은 프로젝트 내부 상대경로에 의존하지 않으므로 다른 React 프로젝트로 복사할 수 있습니다.
+ *
+ * 코드를 읽는 권장 순서
+ * 1. import: React와 MindFusion에서 어떤 도구를 가져오는지 확인합니다.
+ * 2. 상수·데이터: 노드에 넣을 값과 반복할 배열을 확인합니다.
+ * 3. 컴포넌트 상태·ref: 화면이 기억할 값과 MindFusion 인스턴스를 확인합니다.
+ * 4. 초기화 함수: Diagram, 노드와 연결선을 어떤 순서로 만드는지 확인합니다.
+ * 5. 이벤트 함수: 클릭·선택·DOM 생성 뒤 어떤 상태가 바뀌는지 확인합니다.
+ * 6. cleanup: 컴포넌트가 사라질 때 이벤트와 모델을 어떻게 정리하는지 확인합니다.
+ * 7. return JSX: DiagramView에 model, ref와 이벤트 prop이 어떻게 전달되는지 확인합니다.
+ *
+ * 이번 예제의 핵심 용어
+${objectGuide}
+ *
+ * 기억할 점
+ * - Diagram은 데이터 모델이고 DiagramView는 그 모델을 화면에 표시하는 React 뷰입니다.
+ * - Rect의 네 값은 순서대로 x, y, width, height입니다.
+ * - onStatus는 학습 사이트의 검증 패널용 선택적 prop입니다. 외부 프로젝트에서는 전달하지 않아도 됩니다.
+ * - StrictMode의 개발 환경 이중 마운트가 문제가 되면 안내된 main.jsx처럼 StrictMode 없이 먼저 확인하세요.
+ * - ${commentText(content.mistake)}
+ */
+`;
+
+  let annotated = source.trimStart();
+  const annotations = [
+    ["export default function", "[컴포넌트 시작] 이 함수가 외부에서 import해 렌더링하는 예제 컴포넌트입니다. props의 onStatus는 선택 사항입니다."],
+    ["function useIntegratedDiagram", "[공통 훅] Diagram 모델, 선택, 트리 표시 상태, 검색과 화면 이동 동작을 한곳에서 관리합니다."],
+    ["const integratedMockData =", "[예제 데이터] 실제 서버 대신 사용할 JSON 형태의 루트·자식·카드 데이터입니다. 같은 구조로 API 응답을 교체할 수 있습니다."],
+    ["const cards =", "[카드 배열] 카드 수를 늘리거나 내용을 바꾸려면 먼저 이 배열의 객체를 수정합니다. map이 각 객체를 HTML 카드로 바꿉니다."],
+    ["new Diagram()", "[Diagram 생성] 노드와 연결선을 보관할 모델을 만듭니다. useState의 초기 함수 안에서 만들면 React 재렌더링에도 같은 모델을 유지합니다."],
+    ["new ShapeNode", "[일반 노드 생성] ShapeNode 객체만 만든 상태이며, bounds·text·스타일을 설정한 뒤 Diagram에 등록해야 화면에 나타납니다."],
+    ["new ControlNode", "[HTML 노드 생성] ControlNode는 실제 HTML을 다이어그램 좌표에 표시합니다. 생성자에는 DiagramView의 core view가 필요합니다."],
+    ["new Rect", "[위치와 크기] Rect(x, y, width, height)로 다이어그램 좌표상의 위치와 노드 크기를 함께 지정합니다."],
+    ["diagram.addItem", "[모델에 등록] 직접 new로 만든 노드는 addItem을 호출해야 Diagram이 관리하고 DiagramView가 그릴 수 있습니다."],
+    ["createShapeNode", "[Factory 생성] Factory 메서드는 노드를 만들면서 Diagram에 자동 등록합니다. 반환 노드를 다시 addItem하지 않습니다."],
+    ["createDiagramLink", "[연결선 생성] 출발 노드와 도착 노드가 Diagram에 준비된 뒤 두 노드를 연결합니다."],
+    ["const initialize =", "[초기화 함수] DiagramView가 준비된 뒤 한 번 실행되어 노드와 연결선을 구성합니다. 중복 실행 방지 조건을 먼저 확인하세요."],
+    ["const domCreated =", "[DOM 생성 이벤트] ControlNode의 HTML이 실제 브라우저 DOM으로 만들어진 뒤 버튼·이미지를 안전하게 검색하고 이벤트를 연결합니다."],
+    ["const selectionChanged =", "[선택 변경 처리] 현재 Selection 목록을 읽고 React 상태, 노드 크기 또는 내부 HTML을 선택 상태에 맞게 갱신합니다."],
+    ["addEventListener", "[브라우저 이벤트 등록] DOM 요소와 handler 함수 쌍을 기억해야 cleanup에서 정확히 같은 함수로 제거할 수 있습니다."],
+    ["useEffect", "[React 생명주기] effect는 렌더링 뒤 부수 작업을 수행하고, 반환 함수는 unmount 시 리스너와 Diagram 내용을 정리합니다."],
+    ["<DiagramView", "[화면 렌더링] 준비한 Diagram 모델과 ref, 이벤트 함수를 DiagramView prop으로 전달합니다. 부모 요소에는 반드시 높이가 있어야 합니다."],
+  ];
+  annotations.forEach(([token, comment]) => {
+    annotated = insertCommentBeforeFirst(annotated, token, comment);
+  });
+  return `${header}${annotated.trimEnd()}\n`;
+}

@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Alert, Button, Tabs, Tag, Typography, message } from "antd";
 import { CopyOutlined } from "@ant-design/icons";
 import integratedStandaloneSource from "../features/integrated/IntegratedDiagramExample.jsx?raw";
-import { buildBeginnerGuideMarkdown } from "../data/beginnerGuideContent";
+import { annotateSourceForBeginners, buildBeginnerGuideMarkdown } from "../data/beginnerGuideContent";
 
 const exampleSources = import.meta.glob("/src/examples/**/*.jsx", {
   query: "?raw",
@@ -119,17 +119,24 @@ export default function SourceCodeViewer({ lesson }) {
     const componentName = jsxPath.split("/").at(-1).replace(".jsx", "");
     const graphPackage = lesson.category === "07" ? " @mindfusion/graphs" : "";
     const variantProp = usesIntegratedFeature ? ` variant="${integratedVariantByLesson[lesson.key]}"` : "";
-    const usage = `npm install react react-dom @mindfusion/diagramming @mindfusion/diagramming-react @mindfusion/drawing${graphPackage}
+    const rawSource = usesIntegratedFeature ? integratedStandaloneSource : (exampleSources[jsxPath] || "");
+    const usage = `# 1. 터미널에서 이 명령으로 React와 MindFusion 패키지를 설치합니다.
+npm install react react-dom @mindfusion/diagramming @mindfusion/diagramming-react @mindfusion/drawing${graphPackage}
 
 // main.jsx
+// 2. createRoot는 index.html의 <div id="root"></div> 안에 React 화면을 시작합니다.
 import { createRoot } from "react-dom/client";
+
+// 3. 소스 코드 탭에서 복사한 JSX 파일을 main.jsx와 같은 폴더에 저장합니다.
 import ${componentName} from "./${componentName}";
 
-// MindFusion React 4.9.0 래퍼는 개발 환경의 StrictMode 이중 마운트를 지원하지 않습니다.
+// 4. MindFusion React 4.9.0 래퍼는 개발 환경의 StrictMode 이중 마운트를 지원하지 않습니다.
+//    처음 실행할 때는 <StrictMode>로 감싸지 말고 아래처럼 직접 렌더링하세요.
+// 5. 15~19 통합 예제는 variant 값으로 현재 학습 단계의 기능을 선택합니다.
 createRoot(document.getElementById("root")).render(<${componentName}${variantProp} />);
 `;
     return {
-      jsx: { path: jsxPath, code: usesIntegratedFeature ? integratedStandaloneSource : (exampleSources[jsxPath] || "") },
+      jsx: { path: jsxPath, code: annotateSourceForBeginners(lesson, rawSource) },
       usage: { path: "설치 및 App.jsx 사용 예시", code: usage },
       guide: { path: lesson.guidePath, code: buildBeginnerGuideMarkdown(lesson, guideSources[lesson.guidePath] || "") },
     };
@@ -164,7 +171,7 @@ createRoot(document.getElementById("root")).render(<${componentName}${variantPro
         type="success"
         showIcon
         title="이 파일 하나만 복사하면 됩니다"
-        description="표시된 JSX는 프로젝트 내부 공통 모듈이나 CSS를 참조하지 않습니다. 필요한 MindFusion 패키지를 설치하고 설치·사용 방법의 variant를 그대로 적용하면 바로 실행됩니다."
+        description="표시된 JSX에는 파일 목적, API 용어, 실행 순서, 생명주기와 흔한 실수를 설명하는 초보자용 상세 주석이 포함되어 있습니다. 필요한 MindFusion 패키지를 설치하고 안내된 variant를 적용하면 바로 실행됩니다."
       />
       <div className="section-toolbar">
         <Typography.Title level={4}>복사 가능한 독립 예제</Typography.Title>

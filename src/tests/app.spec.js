@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { readyLessons } from "../data/lessonMenus";
-import { buildBeginnerGuideMarkdown } from "../data/beginnerGuideContent";
+import { annotateSourceForBeginners, buildBeginnerGuideMarkdown } from "../data/beginnerGuideContent";
 
 function collectBrowserErrors(page) {
   const errors = [];
@@ -81,6 +81,7 @@ test("15~19 소스 뷰어는 상대경로 없는 단일 실행 파일을 제공�
   await expect(page.getByRole("tab", { name: "독립 실행 JSX" })).toBeVisible();
   await expect(page.getByRole("tab", { name: "공통 훅·유틸" })).toHaveCount(0);
   await expect(page.locator(".source-panel:visible")).toContainText("function useIntegratedDiagram");
+  await expect(page.locator(".source-panel:visible")).toContainText("[초보자용 상세 주석] 19-01");
   await page.getByRole("tab", { name: "설치·사용 방법" }).click();
   await expect(page.locator(".source-panel:visible")).toContainText('variant="final"');
   expect(errors).toEqual([]);
@@ -99,6 +100,32 @@ test("모든 메뉴의 개발 가이드가 초보자용 필수 설명을 포함�
     expect(guide, lesson.key).toContain("실행 결과 체크리스트");
     expect(guide, lesson.key).toContain("초보자가 자주 막히는 부분");
     expect(guide, lesson.key).not.toContain("undefined");
+  }
+});
+
+test("모든 복사 소스가 메뉴별 초보자 상세 주석을 포함한다", () => {
+  const examplesRoot = join(process.cwd(), "src", "examples");
+  const standaloneFiles = readdirSync(examplesRoot, { recursive: true })
+    .filter((file) => typeof file === "string" && /^(0[1-9]|1[0-4])-/.test(file) && file.endsWith(".jsx"));
+  for (const file of standaloneFiles) {
+    const match = file.match(/Step(\d{2})(\d{2})/);
+    const key = `${match[1]}-${match[2]}`;
+    const lesson = readyLessons.find((item) => item.key === key);
+    const annotated = annotateSourceForBeginners(lesson, readFileSync(join(examplesRoot, file), "utf8"));
+    expect(annotated, key).toContain(`[초보자용 상세 주석] ${key}`);
+    expect(annotated, key).toContain("코드를 읽는 권장 순서");
+    expect(annotated, key).toContain("이번 예제의 핵심 용어");
+    expect(annotated, key).toContain("[컴포넌트 시작]");
+    expect(annotated, key).not.toContain("undefined");
+  }
+
+  const integratedSource = readFileSync(join(process.cwd(), "src", "features", "integrated", "IntegratedDiagramExample.jsx"), "utf8");
+  for (const lesson of readyLessons.filter((item) => Number(item.category) >= 15)) {
+    const annotated = annotateSourceForBeginners(lesson, integratedSource);
+    expect(annotated, lesson.key).toContain(`[초보자용 상세 주석] ${lesson.key}`);
+    expect(annotated, lesson.key).toContain("[공통 훅]");
+    expect(annotated, lesson.key).toContain("[예제 데이터]");
+    expect(annotated, lesson.key).toContain("[화면 렌더링]");
   }
 });
 
