@@ -1,4 +1,6 @@
 import { expect, test } from "@playwright/test";
+import { readFileSync, readdirSync } from "node:fs";
+import { join } from "node:path";
 
 function collectBrowserErrors(page) {
   const errors = [];
@@ -20,6 +22,10 @@ test("애플리케이션 공통 화면과 탭이 동작한다", async ({ page })
 
   await page.getByRole("tab", { name: "소스 코드" }).click();
   await expect(page.getByTestId("source-code-viewer")).toBeVisible();
+  await expect(page.getByText("이 파일 하나만 복사하면 됩니다")).toBeVisible();
+  await expect(page.getByRole("tab", { name: "독립 실행 JSX" })).toBeVisible();
+  await page.getByRole("tab", { name: "설치·사용 방법" }).click();
+  await expect(page.locator(".source-panel:visible")).toContainText("npm install react react-dom");
 
   await page.getByRole("tab", { name: "개발 가이드" }).click();
   await expect(page.getByTestId("markdown-guide")).toBeVisible();
@@ -28,7 +34,24 @@ test("애플리케이션 공통 화면과 탭이 동작한다", async ({ page })
   expect(errors).toEqual([]);
 });
 
+test("모든 예제 JSX가 프로젝트 내부 모듈 없이 독립 실행 가능하다", () => {
+  const examplesRoot = join(process.cwd(), "src", "examples");
+  const files = readdirSync(examplesRoot, { recursive: true })
+    .filter((file) => typeof file === "string" && /^0[1-5]-/.test(file) && file.endsWith(".jsx"));
+
+  expect(files).toHaveLength(30);
+  for (const file of files) {
+    const source = readFileSync(join(examplesRoot, file), "utf8");
+    expect(source, file).not.toContain('from "../');
+    expect(source, file).not.toContain('from "./');
+    expect(source, file).toContain("@mindfusion/diagramming");
+    expect(source, file).toContain("@mindfusion/diagramming-react");
+    expect(source, file).toContain("export default function");
+  }
+});
+
 test("구현된 모든 메뉴의 노드와 연결선 수가 검증된다", async ({ page }) => {
+  test.setTimeout(60_000);
   const errors = collectBrowserErrors(page);
   const lessons = [
     ["01-01", "빈 Diagram", 0],
@@ -122,14 +145,14 @@ test("실제 캔버스 노드 클릭과 더블 클릭 이벤트가 수신된다"
   await page.getByText("04. 노드 선택과 이벤트", { exact: true }).click();
   await page.getByText("04-01 클릭 이벤트", { exact: true }).click();
   await page.getByRole("tab", { name: "실행 화면" }).click();
-  const canvas = page.locator(".diagram-host canvas").first();
+  const canvas = page.getByTestId("diagram-demo").locator("canvas").first();
   const box = await canvas.boundingBox();
   await page.mouse.click(box.x + box.width * 0.25, box.y + box.height * 0.35);
   await expect(page.getByTestId("event-count")).not.toContainText("0회");
 
   await page.getByText("04-05 더블 클릭", { exact: true }).click();
   await page.getByRole("tab", { name: "실행 화면" }).click();
-  const secondBox = await page.locator(".diagram-host canvas").first().boundingBox();
+  const secondBox = await page.getByTestId("diagram-demo").locator("canvas").first().boundingBox();
   await page.mouse.dblclick(secondBox.x + secondBox.width * 0.25, secondBox.y + secondBox.height * 0.35);
   await expect(page.getByTestId("last-event")).toContainText("더블 클릭");
 

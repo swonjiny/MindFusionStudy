@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Button, Tabs, Tag, Typography, message } from "antd";
+import { Alert, Button, Tabs, Tag, Typography, message } from "antd";
 import { CopyOutlined } from "@ant-design/icons";
 
 const exampleSources = import.meta.glob("/src/examples/**/*.jsx", {
@@ -7,16 +7,7 @@ const exampleSources = import.meta.glob("/src/examples/**/*.jsx", {
   import: "default",
   eager: true,
 });
-const sharedSources = import.meta.glob(
-  ["/src/examples/lessonDefinitions.js", "/src/styles/diagram.css", "/src/data/lessonMenus.js"],
-  { query: "?raw", import: "default", eager: true },
-);
 const guideSources = import.meta.glob("/src/guides/**/*.md", {
-  query: "?raw",
-  import: "default",
-  eager: true,
-});
-const verificationSources = import.meta.glob("/src/components/VerificationPanel.jsx", {
   query: "?raw",
   import: "default",
   eager: true,
@@ -60,15 +51,20 @@ export default function SourceCodeViewer({ lesson }) {
 
   const files = useMemo(() => {
     const jsxPath = sourceFileByLesson[lesson.key];
+    const componentName = jsxPath.split("/").at(-1).replace(".jsx", "");
+    const usage = `npm install react react-dom @mindfusion/diagramming @mindfusion/diagramming-react @mindfusion/drawing
+
+// main.jsx
+import { createRoot } from "react-dom/client";
+import ${componentName} from "./${componentName}";
+
+// MindFusion React 4.9.0 래퍼는 개발 환경의 StrictMode 이중 마운트를 지원하지 않습니다.
+createRoot(document.getElementById("root")).render(<${componentName} />);
+`;
     return {
       jsx: { path: jsxPath, code: exampleSources[jsxPath] || "" },
-      css: { path: "/src/styles/diagram.css", code: sharedSources["/src/styles/diagram.css"] || "" },
-      data: { path: "/src/examples/lessonDefinitions.js", code: sharedSources["/src/examples/lessonDefinitions.js"] || "" },
+      usage: { path: "설치 및 App.jsx 사용 예시", code: usage },
       guide: { path: lesson.guidePath, code: guideSources[lesson.guidePath] || "" },
-      verify: {
-        path: "/src/components/VerificationPanel.jsx",
-        code: verificationSources["/src/components/VerificationPanel.jsx"] || "",
-      },
     };
   }, [lesson]);
 
@@ -78,10 +74,8 @@ export default function SourceCodeViewer({ lesson }) {
   };
 
   const items = [
-    ["jsx", "예제 JSX"],
-    ["css", "CSS"],
-    ["data", "데이터 파일"],
-    ["verify", "검증 코드"],
+    ["jsx", "독립 실행 JSX"],
+    ["usage", "설치·사용 방법"],
     ["guide", "Markdown"],
   ].map(([key, label]) => ({
     key,
@@ -99,8 +93,14 @@ export default function SourceCodeViewer({ lesson }) {
 
   return (
     <section data-testid="source-code-viewer">
+      <Alert
+        type="success"
+        showIcon
+        title="이 파일 하나만 복사하면 됩니다"
+        description="예제 JSX는 프로젝트 내부 공통 모듈이나 CSS를 참조하지 않습니다. 필요한 MindFusion 패키지를 설치하고 App.jsx에서 렌더링하면 바로 실행됩니다."
+      />
       <div className="section-toolbar">
-        <Typography.Title level={4}>실제 소스 코드</Typography.Title>
+        <Typography.Title level={4}>복사 가능한 독립 예제</Typography.Title>
         <Button icon={<CopyOutlined />} onClick={copy}>코드 복사</Button>
       </div>
       <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />
