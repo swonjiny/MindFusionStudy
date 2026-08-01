@@ -39,7 +39,7 @@ test("01~14 예제는 독립 실행되고 15~19는 공통 통합 모듈을 재�
   const allFiles = readdirSync(examplesRoot, { recursive: true })
     .filter((file) => typeof file === "string" && /^(0[1-9]|1[0-4])-/.test(file) && file.endsWith(".jsx"));
 
-  expect(allFiles).toHaveLength(68);
+  expect(allFiles).toHaveLength(69);
   for (const file of allFiles) {
     const source = readFileSync(join(examplesRoot, file), "utf8");
     expect(source, file).not.toContain('from "../');
@@ -335,6 +335,19 @@ test("13 선택 시 확장하고 선택 해제 시 원래 카드 크기로 복�
   await page.getByRole("button", { name: "5개 카드로 펼치기", exact: true }).click();
   await expect(page.getByTestId("size-result")).toContainText("126 × 108");
   await expect(page.getByTestId("verification-card-dom")).toContainText("현재 5개");
+
+  await page.getByText("13-05 내부 버튼 펼치기", { exact: true }).click();
+  await expect(page.getByTestId("internal-expand-state")).toHaveText("축약 카드");
+  await expect(page.locator('[data-mf-card-node="13-05"]')).toHaveAttribute("data-expanded", "false");
+  await page.getByTestId("internal-expand-button").click();
+  await expect(page.getByTestId("internal-expand-state")).toHaveText("5개 카드 펼침");
+  await expect(page.locator('[data-mf-card-node="13-05"] [data-card-id]')).toHaveCount(5);
+  await expect(page.getByTestId("internal-close-button")).toBeVisible();
+  await expect(page.getByTestId("verification-card-expanded")).toContainText("success");
+  await page.getByTestId("internal-close-button").click();
+  await expect(page.getByTestId("internal-expand-state")).toHaveText("축약 카드");
+  await expect(page.locator('[data-mf-card-node="13-05"] [data-card-id]')).toHaveCount(0);
+  await expect(page.getByTestId("internal-expand-button")).toBeVisible();
   expect(errors).toEqual([]);
 });
 

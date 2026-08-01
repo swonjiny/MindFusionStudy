@@ -83,6 +83,7 @@ const sourceFileByLesson = {
   "13-02": "/src/examples/13-expand-on-selection/Step1302ExpandSelected.jsx",
   "13-03": "/src/examples/13-expand-on-selection/Step1303RestoreOnDeselect.jsx",
   "13-04": "/src/examples/13-expand-on-selection/Step1304SizeByCardCount.jsx",
+  "13-05": "/src/examples/13-expand-on-selection/Step1305InternalExpandClose.jsx",
   "14-01": "/src/examples/14-image-title-description/Step1401ProfileContent.jsx",
   "14-02": "/src/examples/14-image-title-description/Step1402ImageFallback.jsx",
   "14-03": "/src/examples/14-image-title-description/Step1403EmptyData.jsx",

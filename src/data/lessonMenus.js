@@ -63,6 +63,7 @@ const readySpecs = [
   ["13-02", "선택 시 카드 펼치기", "선택 시 펼치기", "노드를 선택하면 크기를 확장하고 카드 목록을 표시합니다.", 1, 0, ["onSelectionChanged", "getContent", "bounds"], "selection", true, 1, 0, null, 1, 0, 2, 2, 1, true, 0],
   ["13-03", "선택 해제 시 크기 복원", "선택 해제 복원", "선택을 해제하면 카드 목록을 숨기고 원래 크기로 복원합니다.", 1, 0, ["Selection.clear", "Rect", "innerHTML"], "selection", false, 1, 0, null, 1, 0, 3, 0, 0, false, 0],
   ["13-04", "카드 수 기반 크기 계산", "카드 수 크기 계산", "카드 수로 노드 너비와 높이를 계산한 뒤 선택 시 적용합니다.", 1, 0, ["Array.length", "Rect", "onSelectionChanged"], "selection", true, 1, 0, null, 1, 0, 5, 5, 1, true, 0],
+  ["13-05", "카드 내부 버튼으로 펼치기·닫기", "내부 버튼 펼치기", "축약 카드의 펼치기 버튼과 확장 카드 상단의 닫기 버튼으로 상태를 전환합니다.", 1, 0, ["data-action", "event delegation", "Rect", "data-interactive"], "buttonClick", false, 1, 0, null, 1, 1, 5, 5, 0, true, 0],
   ["14-01", "이미지·닉네임·소개 카드", "이미지·제목·설명", "이미지, 닉네임, 간단소개를 명확한 카드 구조로 배치합니다.", 1, 0, ["img", "article", "ControlNode"], null, false, 1, 0, null, 1, 0, 1, 1, 0, true, 0],
   ["14-02", "이미지 오류 대체 처리", "이미지 오류 처리", "이미지 로드 실패 시 이니셜 대체 이미지를 표시합니다.", 1, 0, ["error event", "fallback image", "cleanup"], null, false, 1, 0, null, 1, 0, 1, 1, 0, true, 0],
   ["14-03", "카드 데이터 없음 상태", "데이터 없음", "빈 배열일 때 명시적인 데이터 없음 화면을 표시합니다.", 1, 0, ["empty array", "empty state", "ControlNode"], null, false, 1, 0, null, 1, 0, 0, 0, 0, true, 0],

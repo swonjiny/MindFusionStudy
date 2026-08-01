@@ -62,6 +62,7 @@ import Step1301CollapsedBeforeSelection from "../examples/13-expand-on-selection
 import Step1302ExpandSelected from "../examples/13-expand-on-selection/Step1302ExpandSelected";
 import Step1303RestoreOnDeselect from "../examples/13-expand-on-selection/Step1303RestoreOnDeselect";
 import Step1304SizeByCardCount from "../examples/13-expand-on-selection/Step1304SizeByCardCount";
+import Step1305InternalExpandClose from "../examples/13-expand-on-selection/Step1305InternalExpandClose";
 import Step1401ProfileContent from "../examples/14-image-title-description/Step1401ProfileContent";
 import Step1402ImageFallback from "../examples/14-image-title-description/Step1402ImageFallback";
 import Step1403EmptyData from "../examples/14-image-title-description/Step1403EmptyData";
@@ -146,6 +147,7 @@ export const lessonRegistry = {
   "13-02": Step1302ExpandSelected,
   "13-03": Step1303RestoreOnDeselect,
   "13-04": Step1304SizeByCardCount,
+  "13-05": Step1305InternalExpandClose,
   "14-01": Step1401ProfileContent,
   "14-02": Step1402ImageFallback,
   "14-03": Step1403EmptyData,
