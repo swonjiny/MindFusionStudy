@@ -8,6 +8,7 @@ import { useMemo, useState } from "react";
 import { Alert, Button, Tabs, Tag, Typography, message } from "antd";
 import { CopyOutlined } from "@ant-design/icons";
 import integratedStandaloneSource from "../features/integrated/IntegratedDiagramExample.jsx?raw";
+import cityTreeStandaloneSource from "./city-tree/CityTreeCanvas.jsx?raw";
 import { annotateSourceForBeginners, buildBeginnerGuideMarkdown } from "../data/beginnerGuideContent";
 
 const exampleSources = import.meta.glob("/src/examples/**/*.jsx", {
@@ -26,6 +27,9 @@ const integratedVariantByLesson = {
   "17-01": "json", "17-02": "loading", "17-03": "error", "17-04": "empty",
   "18-01": "search", "18-02": "filter", "18-03": "verification",
   "19-01": "final",
+  "19-16": "overview", "19-17": "basic", "19-18": "roots", "19-19": "nested",
+  "19-20": "icons", "19-21": "detail", "19-22": "expanded", "19-23": "tooltip",
+  "19-24": "panel", "19-25": "controls", "19-26": "final",
 };
 
 const sourceFileByLesson = {
@@ -119,13 +123,20 @@ export default function SourceCodeViewer({ lesson }) {
 
   const files = useMemo(() => {
     const usesIntegratedFeature = Number(lesson.category) >= 15;
-    const jsxPath = usesIntegratedFeature
-      ? "/src/features/integrated/IntegratedDiagramExample.jsx"
+    const usesCityTree = Boolean(lesson.tracksCityTree);
+    const jsxPath = usesCityTree
+      ? "/src/components/city-tree/CityTreeCanvas.jsx"
+      : usesIntegratedFeature
+        ? "/src/features/integrated/IntegratedDiagramExample.jsx"
       : sourceFileByLesson[lesson.key];
     const componentName = jsxPath.split("/").at(-1).replace(".jsx", "");
     const graphPackage = lesson.category === "07" ? " @mindfusion/graphs" : "";
     const variantProp = usesIntegratedFeature ? ` variant="${integratedVariantByLesson[lesson.key]}"` : "";
-    const rawSource = usesIntegratedFeature ? integratedStandaloneSource : (exampleSources[jsxPath] || "");
+    const rawSource = usesCityTree
+      ? cityTreeStandaloneSource
+      : usesIntegratedFeature
+        ? integratedStandaloneSource
+        : (exampleSources[jsxPath] || "");
     const usage = `# 1. 터미널에서 이 명령으로 React와 MindFusion 패키지를 설치합니다.
 npm install react react-dom @mindfusion/diagramming @mindfusion/diagramming-react @mindfusion/drawing${graphPackage}
 

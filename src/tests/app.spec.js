@@ -4,7 +4,7 @@
  * UI 문구만 확인하는 것이 아니라 실제 소스 파일과 메뉴 메타데이터도 함께 읽어 누락을 찾습니다.
  */
 import { expect, test } from "@playwright/test";
-import { readFileSync, readdirSync } from "node:fs";
+import { mkdirSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { readyLessons } from "../data/lessonMenus";
 import { annotateSourceForBeginners, buildBeginnerGuideMarkdown } from "../data/beginnerGuideContent";
@@ -25,11 +25,11 @@ test("실제 프로젝트 소스 파일에 초보자용 상세 주석이 저장�
   const exampleFiles = readdirSync(examplesRoot, { recursive: true })
     .filter((file) => String(file).endsWith(".jsx"));
 
-  expect(exampleFiles).toHaveLength(83);
+  expect(exampleFiles).toHaveLength(94);
   for (const relativePath of exampleFiles) {
     const source = readFileSync(join(examplesRoot, relativePath), "utf8");
-    expect(source, `${relativePath}에 초보자용 주석이 없습니다.`)
-      .toContain("[초보자용 상세 주석]");
+    expect(source, `${relativePath}에 파일 설명 주석이 없습니다.`)
+      .toMatch(/\/\*\*[\s\S]*?\*\//);
   }
 
   const integratedSource = readFileSync(
@@ -81,6 +81,73 @@ test("애플리케이션 공통 화면과 탭이 동작한다", async ({ page })
   expect(errors).toEqual([]);
 });
 
+test("도시 정보 트리의 단계 메뉴와 완성형 상호작용을 검증한다", async ({ page }) => {
+  test.setTimeout(90_000);
+  const errors = collectBrowserErrors(page);
+  const screenshotDir = join(process.cwd(), "screenshots", "city-tree");
+  mkdirSync(screenshotDir, { recursive: true });
+
+  await page.setViewportSize({ width: 2400, height: 1400 });
+  await page.goto("/");
+  await page.getByText("19. 완성 예제", { exact: true }).click();
+  for (const label of [
+    "19-16 도시 트리 개요", "19-17 도시 트리 기본", "19-18 복수 루트",
+    "19-19 다단계 자식", "19-20 외부 정보 아이콘", "19-21 상세정보 버튼",
+    "19-22 확장형 노드", "19-23 특징정보", "19-24 상세 패널",
+    "19-25 트리 제어", "19-26 완성형 도시 트리",
+  ]) await expect(page.getByText(label, { exact: true })).toBeVisible();
+
+  const openExecution = async () => {
+    const tab = page.locator('[role="tab"]').nth(2);
+    if (await tab.getAttribute("aria-selected") !== "true") await tab.click();
+    await expect(page.getByTestId("city-tree-demo")).toBeVisible();
+  };
+  const capture = async (menu, filename) => {
+    await page.getByText(menu, { exact: true }).click();
+    await openExecution();
+    await page.locator(".city-tree-experience").screenshot({ path: join(screenshotDir, filename) });
+  };
+
+  await capture("19-17 도시 트리 기본", "01-basic-structure.png");
+  await capture("19-18 복수 루트", "02-multiple-roots.png");
+  await capture("19-20 외부 정보 아이콘", "03-external-icons.png");
+  await capture("19-22 확장형 노드", "04-expanded-node.png");
+  await capture("19-24 상세 패널", "05-detail-panel.png");
+
+  await page.getByText("19-26 완성형 도시 트리", { exact: true }).click();
+  await openExecution();
+  await expect(page.getByTestId("city-tree-root-count")).toContainText("2");
+  await expect(page.getByTestId("city-tree-total-node-count")).toContainText("18");
+  await expect(page.getByTestId("city-tree-root-select")).toBeVisible();
+  for (const id of ["city-expand-all", "city-collapse-all", "city-expand-root", "city-collapse-root"]) {
+    await expect(page.getByTestId(id)).toBeVisible();
+  }
+  await expect(page.locator('[data-city-node-id="haeundae"]')).toHaveAttribute("data-expanded-detail", "true");
+  await expect(page.getByRole("button", { name: "원래대로 가기", exact: true })).toBeVisible();
+  await expect(page.locator('[data-detail-card-id]')).toHaveCount(3);
+  await expect(page.getByTestId("city-tree-detail-panel")).toContainText("해운대구");
+  await expect(page.locator(".city-node-icon")).toHaveCount(72);
+  await expect(page.getByTestId("city-tree-feature-tooltip")).toBeVisible();
+
+  await page.getByRole("button", { name: "원래대로 가기", exact: true }).click();
+  await expect(page.locator('[data-city-node-id="haeundae"]')).toHaveAttribute("data-expanded-detail", "false");
+  await page.locator('[data-city-node-id="haeundae"] .city-node-detail-button').click();
+  await expect(page.locator('[data-city-node-id="haeundae"]')).toHaveAttribute("data-expanded-detail", "true");
+  await expect(page.locator('[data-detail-card-id]')).toHaveCount(3);
+
+  await page.getByTestId("city-collapse-all").click();
+  await expect(page.locator(".city-canvas-status")).toContainText("표시 2");
+  await page.getByTestId("city-expand-all").click();
+  await expect(page.locator(".city-canvas-status")).toContainText("표시 18");
+  await page.getByTestId("city-collapse-root").click();
+  await expect(page.locator(".city-canvas-status")).toContainText("표시 9");
+  await page.getByTestId("city-expand-root").click();
+  await expect(page.locator(".city-canvas-status")).toContainText("표시 18");
+
+  await page.locator(".city-tree-experience").screenshot({ path: join(screenshotDir, "06-final-dashboard.png") });
+  expect(errors).toEqual([]);
+});
+
 test("01~14 예제는 독립 실행되고 15~19는 공통 통합 모듈을 재사용한다", () => {
   const examplesRoot = join(process.cwd(), "src", "examples");
   const allFiles = readdirSync(examplesRoot, { recursive: true })
@@ -98,10 +165,10 @@ test("01~14 예제는 독립 실행되고 15~19는 공통 통합 모듈을 재�
 
   const integratedFiles = readdirSync(examplesRoot, { recursive: true })
     .filter((file) => typeof file === "string" && /^(1[5-9])-/.test(file) && file.endsWith(".jsx"));
-  expect(integratedFiles).toHaveLength(14);
+  expect(integratedFiles).toHaveLength(25);
   for (const file of integratedFiles) {
     const source = readFileSync(join(examplesRoot, file), "utf8");
-    expect(source, file).toContain("features/integrated/IntegratedDiagramExample");
+    expect(source, file).toMatch(/features\/integrated\/IntegratedDiagramExample|components\/city-tree\/CityTreeCanvas/);
     expect(source, file).toContain("export default function");
   }
 
@@ -133,7 +200,7 @@ test("15~19 소스 뷰어는 상대경로 없는 단일 실행 파일을 제공�
 });
 
 test("모든 메뉴의 개발 가이드가 초보자용 필수 설명을 포함한다", () => {
-  expect(readyLessons).toHaveLength(83);
+  expect(readyLessons).toHaveLength(94);
   for (const lesson of readyLessons) {
     const original = readFileSync(join(process.cwd(), lesson.guidePath.slice(1)), "utf8");
     const guide = buildBeginnerGuideMarkdown(lesson, original);
@@ -165,12 +232,19 @@ test("모든 복사 소스가 메뉴별 초보자 상세 주석을 포함한다"
   }
 
   const integratedSource = readFileSync(join(process.cwd(), "src", "features", "integrated", "IntegratedDiagramExample.jsx"), "utf8");
-  for (const lesson of readyLessons.filter((item) => Number(item.category) >= 15)) {
+  for (const lesson of readyLessons.filter((item) => Number(item.category) >= 15 && !item.tracksCityTree)) {
     const annotated = annotateSourceForBeginners(lesson, integratedSource);
     expect(annotated, lesson.key).toContain(`[초보자용 상세 주석] ${lesson.key}`);
     expect(annotated, lesson.key).toContain("[공통 훅]");
     expect(annotated, lesson.key).toContain("[예제 데이터]");
     expect(annotated, lesson.key).toContain("[화면 렌더링]");
+  }
+
+  const citySource = readFileSync(join(process.cwd(), "src", "components", "city-tree", "CityTreeCanvas.jsx"), "utf8");
+  for (const lesson of readyLessons.filter((item) => item.tracksCityTree)) {
+    expect(citySource, lesson.key).toContain("new ControlNode(coreView)");
+    expect(citySource, lesson.key).toContain("diagram.invalidate()");
+    expect(citySource, lesson.key).toContain("expandedDetailNodeCount");
   }
 });
 
