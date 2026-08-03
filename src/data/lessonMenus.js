@@ -87,7 +87,32 @@ const readySpecs = [
   ["18-02", "노드 유형 필터", "필터", "팀·역할 유형으로 노드를 필터링하고 전체 상태를 복원합니다.", 10, 9, ["filter", "type", "visible"], "filter", false, 10, 9, null, 1, 0, 3, 0, 0, false, 0, "success"],
   ["18-03", "전체 실행 자동 검증", "종합 자동 검증", "데이터·DOM·노드·연결선·콘솔 상태를 한 번에 검증합니다.", 10, 9, ["verification", "DOM", "console"], null, false, 10, 9, null, 1, 0, 3, 0, 0, false, 0, "success"],
   ["19-01", "최종 종합 조직 탐색기", "최종 종합 예제", "15~18의 공통 훅과 유틸로 모든 기능을 한 화면에 통합합니다.", 10, 9, ["useIntegratedDiagram", "IntegratedDiagramExample", "Playwright"], "integrated", false, 10, 9, null, 1, 0, 3, 0, 0, false, 0, "success"],
+  ["19-16", "도시 정보 트리 예제 개요", "도시 트리 개요", "ControlNode 기반 도시 정보 트리의 데이터·화면·상호작용 구성을 소개합니다.", 18, 16, ["ControlNode", "도시 데이터", "검증 상태"], null, false, 18, 16, null, 18, 0, 3, 0, 0, false, 0, "success"],
+  ["19-17", "도시 정보 트리 기본 구조", "도시 트리 기본", "대표 이미지·제목·설명이 있는 HTML 도시 노드를 구성합니다.", 18, 16, ["ControlNode.template", "HTML node", "Rect"], null, false, 18, 16, null, 18, 0, 3, 0, 0, false, 0, "success"],
+  ["19-18", "루트 노드 2개 이상", "복수 루트", "서울특별시와 부산광역시를 독립된 두 루트로 표시합니다.", 18, 16, ["multiple roots", "parentId", "DiagramLink"], null, false, 18, 16, null, 18, 0, 3, 0, 0, false, 0, "success"],
+  ["19-19", "다단계 자식 노드", "다단계 자식", "구와 동으로 이어지는 3단계 트리와 노드별 접기·펼치기를 구현합니다.", 18, 16, ["outgoingLinks", "visible", "expanded"], null, false, 18, 16, null, 18, 6, 3, 0, 0, false, 0, "success"],
+  ["19-20", "노드 바깥 정보 아이콘", "외부 정보 아이콘", "노드 테두리 아래에 색상별 도시 정보 아이콘 72개를 배치합니다.", 18, 16, ["DOM overflow", "categoryIcons", "tooltip"], null, false, 18, 16, null, 18, 6, 3, 0, 0, false, 0, "success"],
+  ["19-21", "상세정보 보기 버튼", "상세정보 버튼", "HTML 버튼 클릭과 노드 선택을 분리하고 상세 확장 동작을 연결합니다.", 18, 16, ["data-interactive", "event delegation", "stopPropagation"], null, false, 18, 16, null, 18, 24, 3, 0, 0, false, 0, "success"],
+  ["19-22", "확장형 상세정보 노드", "확장형 노드", "해운대구 노드의 크기를 키우고 상세 카드 3개를 표시합니다.", 18, 16, ["bounds", "template", "invalidate"], null, false, 18, 16, null, 18, 24, 3, 3, 1, true, 0, "success"],
+  ["19-23", "특징정보 툴팁", "특징정보", "서울특별시와 함께 이동·확대되는 특징정보 말풍선을 추가합니다.", 18, 16, ["DOM overlay", "overflow", "close action"], null, false, 18, 16, null, 18, 25, 3, 3, 1, true, 0, "success"],
+  ["19-24", "선택 노드 상세 패널", "상세 패널", "선택된 도시 노드의 지표와 기관 정보를 우측 패널에 표시합니다.", 18, 16, ["React state", "Descriptions", "selection"], null, false, 18, 16, null, 18, 25, 3, 3, 1, true, 0, "success"],
+  ["19-25", "전체 및 루트별 열기·닫기", "트리 제어", "전체 트리와 선택한 루트를 재귀적으로 열고 닫습니다.", 18, 16, ["recursive visibility", "Select", "tree controls"], null, false, 18, 16, null, 18, 25, 3, 3, 1, true, 0, "success"],
+  ["19-26", "완성형 도시 정보 트리", "완성형 도시 트리", "도시 탐색·외부 아이콘·상세 확장·툴팁·좌우 패널을 한 화면에 통합합니다.", 18, 16, ["CityTreeCanvas", "ControlNode", "Playwright"], null, false, 18, 16, null, 18, 25, 3, 3, 1, true, 0, "success"],
 ];
+
+const cityGuideFiles = {
+  "19-16": "19-16-city-tree-overview.md",
+  "19-17": "19-17-city-tree-basic.md",
+  "19-18": "19-18-city-tree-multiple-roots.md",
+  "19-19": "19-19-city-tree-nested-children.md",
+  "19-20": "19-20-city-tree-external-icons.md",
+  "19-21": "19-21-city-tree-detail-button.md",
+  "19-22": "19-22-city-tree-expanded-node.md",
+  "19-23": "19-23-city-tree-feature-tooltip.md",
+  "19-24": "19-24-city-tree-detail-panel.md",
+  "19-25": "19-25-city-tree-controls.md",
+  "19-26": "19-26-city-tree-final.md",
+};
 
 const guideFolders = {
   "01": "01-diagram-basic",
@@ -132,6 +157,7 @@ const readyLessons = readySpecs.map((spec, index) => {
     tracksHtmlDom: Number(category) >= 9,
     tracksCardState: Number(category) >= 12,
     tracksIntegrated: Number(category) >= 15,
+    tracksCityTree: key >= "19-16" && key <= "19-26",
     expectedHtmlDom: expectedHtmlDom ?? 0,
     expectedButtons: expectedButtons ?? 0,
     expectedCards: expectedCards ?? 0,
@@ -150,7 +176,9 @@ const readyLessons = readySpecs.map((spec, index) => {
     ],
     level: "beginner",
     status: "ready",
-    guidePath: `/src/guides/${guideFolders[category]}/${key}.md`,
+    guidePath: cityGuideFiles[key]
+      ? `/src/guides/19-final-example/${cityGuideFiles[key]}`
+      : `/src/guides/${guideFolders[category]}/${key}.md`,
     previousLessonKey: index ? readySpecs[index - 1][0] : null,
     nextLessonKey: index < readySpecs.length - 1 ? readySpecs[index + 1][0] : null,
   };

@@ -86,6 +86,17 @@ import Step1801SearchNodes from "../examples/18-runtime-verification/Step1801Sea
 import Step1802FilterNodes from "../examples/18-runtime-verification/Step1802FilterNodes";
 import Step1803AutomaticVerification from "../examples/18-runtime-verification/Step1803AutomaticVerification";
 import Step1901IntegratedExplorer from "../examples/19-final-example/Step1901IntegratedExplorer";
+import Step1916CityTreeOverview from "../examples/19-final-example/Step1916CityTreeOverview";
+import Step1917CityTreeBasic from "../examples/19-final-example/Step1917CityTreeBasic";
+import Step1918CityTreeMultipleRoots from "../examples/19-final-example/Step1918CityTreeMultipleRoots";
+import Step1919CityTreeNestedChildren from "../examples/19-final-example/Step1919CityTreeNestedChildren";
+import Step1920CityTreeExternalIcons from "../examples/19-final-example/Step1920CityTreeExternalIcons";
+import Step1921CityTreeDetailButton from "../examples/19-final-example/Step1921CityTreeDetailButton";
+import Step1922CityTreeExpandedNode from "../examples/19-final-example/Step1922CityTreeExpandedNode";
+import Step1923CityTreeFeatureTooltip from "../examples/19-final-example/Step1923CityTreeFeatureTooltip";
+import Step1924CityTreeDetailPanel from "../examples/19-final-example/Step1924CityTreeDetailPanel";
+import Step1925CityTreeControls from "../examples/19-final-example/Step1925CityTreeControls";
+import Step1926CityTreeFinal from "../examples/19-final-example/Step1926CityTreeFinal";
 
 export const lessonRegistry = {
   "01-01": Step0101EmptyDiagram,
@@ -171,4 +182,15 @@ export const lessonRegistry = {
   "18-02": Step1802FilterNodes,
   "18-03": Step1803AutomaticVerification,
   "19-01": Step1901IntegratedExplorer,
+  "19-16": Step1916CityTreeOverview,
+  "19-17": Step1917CityTreeBasic,
+  "19-18": Step1918CityTreeMultipleRoots,
+  "19-19": Step1919CityTreeNestedChildren,
+  "19-20": Step1920CityTreeExternalIcons,
+  "19-21": Step1921CityTreeDetailButton,
+  "19-22": Step1922CityTreeExpandedNode,
+  "19-23": Step1923CityTreeFeatureTooltip,
+  "19-24": Step1924CityTreeDetailPanel,
+  "19-25": Step1925CityTreeControls,
+  "19-26": Step1926CityTreeFinal,
 };

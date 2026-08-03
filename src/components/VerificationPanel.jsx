@@ -118,6 +118,26 @@ export default function VerificationPanel({ lesson, status, onReset }) {
       ["통합 준비", lesson.expectedDataState === "success" ? "트리와 도구가 준비되어야 합니다." : "상태 화면이 안전하게 처리되어야 합니다.", lesson.expectedDataState === "success" ? Boolean(status.integrationReady) : !status.integrationReady, "verification-integration-ready"],
     );
   }
+  if (lesson.tracksCityTree) {
+    const stage = Number(lesson.key.split("-")[1]);
+    checks.push(
+      ["도시 루트", `서울·부산 루트 ${status.rootCount ?? 0}개`, status.rootCount === 2, "verification-city-roots"],
+      ["도시 전체 노드", `계산된 전체 노드 ${status.totalNodeCount ?? 0}개`, status.totalNodeCount === 18, "verification-city-total"],
+      ["숨김 노드", `현재 숨김 ${status.hiddenNodeCount ?? 0}개`, (status.hiddenNodeCount ?? 0) === 0, "verification-city-hidden"],
+    );
+    if (stage >= 20) {
+      checks.push(["외부 정보 아이콘", `데이터 기준 ${status.externalIconCount ?? 0}개`, status.externalIconCount === 72, "verification-city-icons"]);
+    }
+    if (stage >= 22) {
+      checks.push(
+        ["상세 확장 노드", `현재 ${status.expandedDetailNodeCount ?? 0}개`, status.expandedDetailNodeCount === 1, "verification-city-expanded-detail"],
+        ["상세 카드", `현재 ${status.detailCardCount ?? 0}개`, status.detailCardCount === 3, "verification-city-detail-cards"],
+      );
+    }
+    if (stage >= 24) {
+      checks.push(["우측 상세 패널", status.rightPanelReady ? "선택 노드와 연동되었습니다." : "노드를 선택하세요.", Boolean(status.rightPanelReady), "verification-city-detail-panel"]);
+    }
+  }
   const passedCount = checks.filter((item) => item[2]).length;
 
   return (
